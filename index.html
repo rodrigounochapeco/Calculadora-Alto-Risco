@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculadora • Encaminhamento para Alto Risco Gestacional (PNAR)</title>
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <style>
+    :root{
+      --bg: #0b1220;           /* fundo sólido escuro */
+      --panel: #0f172a;
+      --panel-2: #121a2f;      /* leve contraste entre caixas */
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --text-strong: #f8fafc;
+      --border: #1f2a44;
+      --brand-400:#38bdf8;
+      --brand-500:#0ea5e9;
+      --brand-600:#0284c7;
+      --ok-600:#059669;
+      --warn-600:#b45309;
+      --bad-600:#b91c1c;
+      --ok-700:#047857;
+      --warn-700:#92400e;
+      --bad-700:#991b1b;
+      --chip:#111b33;
+      --chip-hover:#0e233f;
+      --focus:#22d3ee;
+      --shadow: 0 12px 32px rgba(0,0,0,.35);
+      --radius: 14px;
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg: #f6f9ff;         /* fundo sólido claro */
+        --panel: #ffffff;
+        --panel-2:#ffffff;
+        --muted: #475569;
+        --text: #0f172a;
+        --text-strong: #0b1220;
+        --border: #e5e7eb;
+        --brand-400:#38bdf8;
+        --brand-500:#0ea5e9;
+        --brand-600:#0284c7;
+        --ok-600:#059669;
+        --warn-600:#b45309;
+        --bad-600:#b91c1c;
+        --ok-700:#047857;
+        --warn-700:#92400e;
+        --bad-700:#991b1b;
+        --chip:#f1f5f9;
+        --chip-hover:#e9eef7;
+        --focus:#0284c7;
+        --shadow: 0 10px 24px rgba(2, 8, 23, .10);
+      }
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      background: var(--bg); /* fundo sólido */
+      color:var(--text);
+      line-height:1.45;
+    }
+    a{color:var(--brand-500); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: clamp(16px, 2.2vw, 28px);
+    }
+
+    header.hero{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin: 8px 0 8px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: color-mix(in oklab, var(--brand-500) 15%, transparent);
+      color: var(--brand-600);
+      border:1px solid color-mix(in oklab, var(--brand-500) 35%, transparent);
+      width: fit-content;
+    }
+    h1{
+      margin: 0;
+      font-size: clamp(22px, 1.9vw, 34px);
+      letter-spacing:.2px;
+      color: var(--text-strong);
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size: clamp(14px, 1.1vw, 16px);
+    }
+    .top-actions{margin-top:6px}
+    .btn{
+      appearance:none; border:1px solid var(--border);
+      background: var(--panel-2); color: var(--text);
+      padding:10px 14px; border-radius:12px; font-weight:600;
+      cursor:pointer; box-shadow: var(--shadow);
+    }
+    .btn:hover{background:color-mix(in oklab, var(--panel-2) 88%, var(--brand-400))}
+    .btn:focus-visible{outline:none; box-shadow:0 0 0 3px color-mix(in oklab, var(--focus) 40%, transparent)}
+
+    .panel{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* Form */
+    form{margin-top: 12px}
+    fieldset{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin: 12px 0;
+      background: var(--panel-2);
+    }
+    legend{
+      padding: 0 8px;
+      font-weight: 800;
+      color: var(--brand-600);
+      letter-spacing:.2px;
+    }
+    .group{
+      display:grid;
+      gap:8px;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+    }
+    .group.cols-1{grid-template-columns: 1fr}
+    .group.cols-3{grid-template-columns: repeat(3, minmax(180px, 1fr))}
+    @media (max-width: 820px){
+      .group, .group.cols-3{grid-template-columns: 1fr}
+    }
+
+    label.option{
+      display:flex; align-items: flex-start; gap:10px;
+      padding: 12px; border-radius: 12px;
+      border:1px solid var(--border); background: var(--chip);
+      cursor:pointer; transition: background .2s ease, border-color .2s ease, transform .05s ease;
+    }
+    label.option:hover{background: var(--chip-hover)}
+    label.option[data-hit="true"]{
+      outline:2px dashed var(--brand-500); outline-offset:2px;
+      background: color-mix(in oklab, var(--chip) 75%, var(--brand-400) 25%);
+    }
+    input[type="checkbox"], input[type="radio"]{
+      margin-top:2px; accent-color: var(--brand-600); transform: translateY(2px);
+    }
+    .opt-text{flex:1}
+
+    /* Resultado (no final da página) */
+    .result{
+      display:none;
+      margin: 18px 0 14px;
+      padding: 18px;
+      gap: 14px;
+      background: var(--panel);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .result-header{
+      display:flex; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:10px;
+    }
+    .chip{
+      display:inline-flex; align-items:center; justify-content:center;
+      font-weight:800; letter-spacing:.4px; text-transform:uppercase;
+      padding:10px 14px; border-radius: 999px; border:1px solid transparent;
+    }
+    .risk-low{ background: color-mix(in oklab, var(--ok-600) 18%, transparent); color: var(--ok-700); border-color: color-mix(in oklab, var(--ok-600) 40%, transparent)}
+    .risk-mid{ background: color-mix(in oklab, var(--warn-600) 18%, transparent); color: var(--warn-700); border-color: color-mix(in oklab, var(--warn-600) 40%, transparent)}
+    .risk-high{ background: color-mix(in oklab, var(--bad-600) 18%, transparent); color: var(--bad-700); border-color: color-mix(in oklab, var(--bad-600) 40%, transparent)}
+    .points{font-weight:700; color:var(--muted)}
+    .note{font-size: 12px; color: var(--muted)}
+    .relatorio{margin-top:8px; font-size:14px; color: var(--text)}
+
+    .conduta{
+      display:none;
+      margin-top:12px;
+      padding: 16px; border-radius: 12px;
+      border:1px dashed var(--border);
+      background: color-mix(in oklab, var(--panel) 88%, var(--brand-400) 12%);
+    }
+    .conduta h3{margin:0 0 8px; font-size:16px}
+    .conduta ul{margin:8px 0 0 18px}
+    .conduta li{margin:4px 0}
+
+    .imc-tools{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top: 10px;}
+    .imc-tools input{
+      width: 120px; padding: 8px 10px; border-radius: 10px;
+      border:1px solid var(--border); background: var(--panel); color: var(--text);
+    }
+    .imc-badge{font-size:12px; color:var(--muted)}
+    .hint{font-size:12px; color:var(--muted); margin-top:6px}
+
+    .sr-only{
+      position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+
+    .foot{
+      margin:18px 0 40px;
+      font-size:12px; color:var(--muted);
+      display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+    }
+    .divider{width:1px; height:12px; background: var(--border); margin: 0 6px}
+
+    /* FAB de busca */
+    .fab-search{
+      position: fixed; right: 22px; bottom: 22px; z-index: 1000;
+      display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+    }
+    .fab-btn{
+      width:52px; height:52px; border-radius:50%;
+      border:none; cursor:pointer; color:#fff; background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+      box-shadow: 0 10px 30px rgba(14,165,233,.35);
+      display:grid; place-items:center; transition: transform .12s ease;
+    }
+    .fab-btn:hover{transform: translateY(-1px)}
+    .fab-panel{
+      display:none; width: min(86vw, 420px);
+      background: var(--panel); color: var(--text);
+      border:1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow);
+      padding: 10px; gap:8px;
+    }
+    .fab-search.open .fab-panel{display:flex; align-items:center}
+    .fab-panel input{
+      flex:1 1 auto; padding: 10px 12px; border-radius: 10px;
+      border:1px solid var(--border); background: var(--panel-2); color:var(--text); outline:none;
+    }
+    .fab-panel input:focus{box-shadow:0 0 0 3px color-mix(in oklab, var(--focus) 35%, transparent)}
+    .fab-clear{
+      appearance:none; border:1px solid var(--border); background: var(--panel-2);
+      color: var(--muted); border-radius:10px; padding:8px 10px; cursor:pointer;
+    }
+    .fab-status{font-size:12px; color:var(--muted); margin-right:4px}
+  </style>
+</head>
+<body>
+  <a class="sr-only" href="#resultado">Pular para o resultado</a>
+  <div class="wrap">
+    <header class="hero">
+      <div class="badge" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5a2 2 0 0 0-2 2v14l4-3h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/></svg>
+        Calculadora clínica
+      </div>
+      <h1>Critérios para encaminhamento – Gestação de Alto Risco (PNAR)</h1>
+      <p class="subtitle">Ferramenta objetiva para médicos generalistas. Marque os critérios e veja o risco e a conduta.</p>
+      <div class="top-actions">
+        <button type="button" class="btn" id="clearAll">Limpar tudo</button>
+      </div>
+    </header>
+
+    <form id="form" novalidate>
+      <!-- 1. Idade Materna -->
+      <fieldset class="panel">
+        <legend>1) Idade materna</legend>
+        <div class="group cols-3">
+          <label class="option" data-search>
+            <input type="radio" name="idade" value="<15" data-points="1" data-group="1" />
+            <div class="opt-text"><div><strong>&lt; 15 anos</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="radio" name="idade" value="15-34" data-points="0" data-group="1" />
+            <div class="opt-text"><div><strong>15 a 34 anos</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="radio" name="idade" value=">35" data-points="1" data-group="1" />
+            <div class="opt-text"><div><strong>&gt; 35 anos</strong></div></div>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- 2A. Situação Familiar (separado) -->
+      <fieldset class="panel">
+        <legend>2A) Situação familiar</legend>
+        <div class="group cols-3">
+          <label class="option" data-search>
+            <input type="radio" name="sit_fam" value="estavel" data-points="0" data-group="2">
+            <div class="opt-text"><div><strong>Estável</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="radio" name="sit_fam" value="instavel" data-points="1" data-group="2">
+            <div class="opt-text"><div><strong>Instável</strong></div></div>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- 2B. Aceitação (separado) -->
+      <fieldset class="panel">
+        <legend>2B) Aceitação</legend>
+        <div class="group cols-3">
+          <label class="option" data-search>
+            <input type="radio" name="aceita" value="aceita" data-points="0" data-group="2">
+            <div class="opt-text"><div><strong>Aceita</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="radio" name="aceita" value="nao-aceita" data-points="1" data-group="2">
+            <div class="opt-text"><div><strong>Não aceita</strong></div></div>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- 3. Escolaridade -->
+      <fieldset class="panel">
+        <legend>3) Escolaridade</legend>
+        <div class="group cols-3">
+          <label class="option" data-search>
+            <input type="radio" name="letramento" value="alfabetizada" data-points="0" data-group="3">
+            <div class="opt-text"><div><strong>Sabe ler e escrever</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="radio" name="letramento" value="nao-alfabetizada" data-points="1" data-group="3">
+            <div class="opt-text"><div><strong>Não sabe ler/escrever</strong></div></div>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- 4. Hábitos -->
+      <fieldset class="panel">
+        <legend>4) Hábitos</legend>
+        <div class="group cols-3">
+          <label class="option" data-search>
+            <input type="radio" name="tabagismo" value="nao" data-points="0" data-group="4">
+            <div class="opt-text"><div><strong>Tabagismo: Não</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="radio" name="tabagismo" value="sim" data-points="2" data-group="4">
+            <div class="opt-text"><div><strong>Tabagismo: Sim</strong></div></div>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- 5. Avaliação Nutricional -->
+      <fieldset class="panel">
+        <legend>5) Avaliação nutricional</legend>
+        <div class="group cols-3" role="group" aria-label="Classificação de IMC e condições associadas">
+          <label class="option" data-search data-keywords="baixo peso; imc menor que 18,5; emagrecida">
+            <input type="radio" name="imc" value="baixo" data-points="1" data-group="5">
+            <div class="opt-text"><div><strong>Baixo peso (IMC &lt; 18,5)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="peso adequado; eutrofia">
+            <input type="radio" name="imc" value="adequado" data-points="0" data-group="5">
+            <div class="opt-text"><div><strong>Peso adequado (IMC 18,5–24,9)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="sobrepeso; imc 25 a 29,9">
+            <input type="radio" name="imc" value="sobrepeso" data-points="1" data-group="5">
+            <div class="opt-text"><div><strong>Sobrepeso (IMC 25–29,9)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="obesidade; obesa; imc 30 ou mais">
+            <input type="radio" name="imc" value="obesidade" data-points="5" data-group="5">
+            <div class="opt-text"><div><strong>Obesidade (IMC ≥ 30)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="anemia; peso inadequado; ferritina; hb baixa">
+            <input type="checkbox" name="anemia_ou_peso_inadequado" value="1" data-points="1" data-group="5">
+            <div class="opt-text"><div><strong>Peso inadequado e/ou Anemia</strong></div></div>
+          </label>
+        </div>
+
+        <div class="imc-tools" aria-live="polite">
+          <label for="altura">Altura (m)</label>
+          <input id="altura" type="text" inputmode="decimal" placeholder="1,60" aria-describedby="imcBadge">
+          <label for="peso">Peso (kg)</label>
+          <input id="peso" type="text" inputmode="decimal" placeholder="60,0" aria-describedby="imcBadge">
+          <button class="btn" type="button" id="calcIMC">Calcular IMC</button>
+          <span id="imcBadge" class="imc-badge">IMC: —</span>
+        </div>
+        <p class="hint">Dica: o IMC é opcional. Você também pode marcar a categoria diretamente.</p>
+      </fieldset>
+
+      <!-- 6. Antecedentes Obstétricos -->
+      <fieldset class="panel">
+        <legend>6) Antecedentes obstétricos</legend>
+        <div class="group">
+          <label class="option" data-search data-keywords="até dois abortos">
+            <input type="checkbox" name="aborto_ate2" data-points="5" data-group="6" data-excludes="#aborto3plus">
+            <div class="opt-text"><div><strong>Abortos até 2</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="três ou mais abortos; recorrente">
+            <input id="aborto3plus" type="checkbox" name="aborto_3plus" data-points="10" data-group="6" data-excludes="[name='aborto_ate2']">
+            <div class="opt-text"><div><strong>Abortos espontâneos (≥ 3)</strong></div></div>
+          </label>
+
+          <label class="option" data-search>
+            <input type="checkbox" data-points="5" data-group="6">
+            <div class="opt-text"><div><strong>Natimorto</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="prematuro; pré-termo">
+            <input type="checkbox" data-points="5" data-group="6">
+            <div class="opt-text"><div><strong>Prematuro</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="óbito fetal intraútero">
+            <input type="checkbox" data-points="5" data-group="6">
+            <div class="opt-text"><div><strong>Óbito fetal</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="pré-eclampsia; pre eclampsia">
+            <input type="checkbox" data-points="10" data-group="6">
+            <div class="opt-text"><div><strong>Pré-eclâmpsia</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="checkbox" data-points="10" data-group="6">
+            <div class="opt-text"><div><strong>Eclâmpsia</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="checkbox" data-points="10" data-group="6">
+            <div class="opt-text"><div><strong>Placenta prévia (antecedente)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="DPP; descolamento">
+            <input type="checkbox" data-points="10" data-group="6">
+            <div class="opt-text"><div><strong>Descolamento prematuro de placenta</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="colo; incompetência istmo cervical">
+            <input type="checkbox" data-points="10" data-group="6">
+            <div class="opt-text"><div><strong>Incompetência ístmo-cervical (antecedente)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="restrição crescimento; rciu">
+            <input type="checkbox" data-points="5" data-group="6">
+            <div class="opt-text"><div><strong>RCIU (antecedente)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="malformação; defeito fetal">
+            <input type="checkbox" data-points="5" data-group="6">
+            <div class="opt-text"><div><strong>Malformação fetal (antecedente)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="intervalo interpartal curto; spacing">
+            <input type="checkbox" data-points="2" data-group="6">
+            <div class="opt-text"><div><strong>Último parto há &lt; 12 meses</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="prematuro; histórico">
+            <input type="checkbox" data-points="10" data-group="6">
+            <div class="opt-text"><div><strong>+1 filho prematuro</strong></div></div>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- 7. Patologias de Risco Atual – Obstétricas / Ginecológicas -->
+      <fieldset class="panel">
+        <legend>7) Patologias de risco atual – Obstétricas / Ginecológicas</legend>
+        <div class="group">
+          <label class="option" data-search>
+            <input type="checkbox" data-points="5" data-group="7o">
+            <div class="opt-text"><div><strong>Ameaça de abortamento</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="anomalia trato geniturinário">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Anomalias do trato geniturinário</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Placenta prévia (atual)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="câncer; onco">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Câncer materno</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="hemolítica; isoimune fetal">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Doença hemolítica</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="fertilidade; reprodução assistida">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Esterilidade tratada</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="isoimunização; rh; anti-d">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Isoimunização</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="neoplasia ginecológica">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Neoplasias ginecológicas</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="congênitas; malformação fetal">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Malformações congênitas</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="restrição crescimento; RCIU atual">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Restrição de crescimento intrauterino</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="liq; polidrâmnio; oligodrâmnio">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Polidrâmnio ou oligodrâmnio</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="papanicolau; nic I; nic II; nic III; colpo">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Citologia cervical anormal (NIC I–III)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="hipertensão gestacional; pré-eclâmpsia atual">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Doença hipertensiva da gestação</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="DMG; hiperglicemia gestacional">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Diabetes gestacional</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="gêmeos; múltiplos">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Gestação gemelar</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="colo; cerclagem; incompetência istmo cervical">
+            <input type="checkbox" data-points="10" data-group="7o">
+            <div class="opt-text"><div><strong>Incompetência ístmo-cervical (atual)</strong></div></div>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- 7. Patologias de Risco Atual – Clínicas / Cirúrgicas -->
+      <fieldset class="panel">
+        <legend>7) Patologias de risco atual – Clínicas / Cirúrgicas</legend>
+        <div class="group">
+          <label class="option" data-search data-keywords="cardio; cardiopatia; coração">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Cardiopatias</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="checkbox" data-points="5" data-group="7c">
+            <div class="opt-text"><div><strong>Varizes acentuadas</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="pulmão; asma grave; dpoc grave">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Pneumopatia grave</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="diabetes tipo 1; tipo 2; DM prévio">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Diabetes mellitus (prévio)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="autoimune; lúpus; colagenose">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Doenças autoimunes (colagenoses)</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="saúde mental; depressão; psicose">
+            <input type="checkbox" data-points="5" data-group="7c">
+            <div class="opt-text"><div><strong>Doença psiquiátrica</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="renal crônica; rim">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Doença renal grave</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="epilepsia; convulsão; neurológica">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Epilepsia / doença neurológica</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="hemopatia; anemia falciforme; talassemia">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Hemopatias</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="hipertensão arterial; HAS">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Hipertensão arterial</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="ITU repetição; pielonefrite; 3 episodios">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Infecção urinária de repetição (pielonefrite ou ≥ 3 episódios)</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Infecções graves</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="HIV; aids; retroviral">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>HIV/AIDS</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Sífilis</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Tuberculose</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Toxoplasmose</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="dependência química; drogas ilícitas">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Dependência de drogas</strong></div></div>
+          </label>
+          <label class="option" data-search>
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Alcoolismo</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="trombofilia; trombose; anticoagulação">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Trombofilias</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="endócrino; pituitária; suprarrenal">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Endocrinopatias</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="tireoide; hipo; hiper">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Alterações da tireoide</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="saúde bucal; gengivite; periodontite">
+            <input type="checkbox" data-points="5" data-group="7c">
+            <div class="opt-text"><div><strong>Doenças infecciosas bucais</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="neoplasia; câncer">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Neoplasias</strong></div></div>
+          </label>
+          <label class="option" data-search data-keywords="inflamatória; doença inflamatória">
+            <input type="checkbox" data-points="10" data-group="7c">
+            <div class="opt-text"><div><strong>Doenças inflamatórias</strong></div></div>
+          </label>
+        </div>
+      </fieldset>
+    </form>
+
+    <!-- RESULTADO (no final da página) -->
+    <section id="resultado" class="result" aria-live="polite" aria-atomic="true">
+      <div class="result-header">
+        <div class="score">
+          <span id="riskBadge" class="chip" aria-label="Nível de risco"></span>
+          <span class="points"><strong>Pontos:</strong> <span id="pointsTotal">0</span></span>
+        </div>
+        <div class="note" id="riskNote"></div>
+      </div>
+      <div id="relatorio" class="relatorio"></div>
+      <div id="conduta" class="conduta" role="dialog" aria-labelledby="conduta-title" aria-describedby="conduta-text">
+        <h3 id="conduta-title">Conduta</h3>
+        <div id="conduta-text"></div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>• Processamento local, sem coleta de dados (LGPD).</span>
+      <span class="divider" aria-hidden="true"></span>
+      <span>• Apoio à decisão. Não substitui o julgamento clínico.</span>
+    </footer>
+  </div>
+
+  <!-- Botão de busca flutuante -->
+  <div class="fab-search" id="fabSearch" aria-live="polite">
+    <div class="fab-panel" id="fabPanel" role="dialog" aria-modal="false" aria-label="Buscar na página">
+      <input id="q" name="q" type="search" placeholder="Digite e pressione Enter para buscar"
+             autocomplete="off" spellcheck="false" aria-describedby="q-status" />
+      <button class="fab-clear" type="button" id="clearSearch" title="Limpar busca">Limpar</button>
+    </div>
+    <span id="q-status" class="fab-status" aria-live="polite"></span>
+    <button type="button" class="fab-btn" id="fabBtn" aria-expanded="false" aria-controls="fabPanel" aria-label="Abrir busca">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 5 1.5-1.5-5-5Zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14Z"/></svg>
+    </button>
+  </div>
+
+  <script>
+    (function(){
+      const form = document.getElementById('form');
+      const resultPanel = document.querySelector('.result');
+      const condutaBox = document.getElementById('conduta');
+      const riskBadge = document.getElementById('riskBadge');
+      const pointsEl = document.getElementById('pointsTotal');
+      const riskNote = document.getElementById('riskNote');
+      const condutaText = document.getElementById('conduta-text');
+      const relatorioEl = document.getElementById('relatorio');
+      const clearBtn = document.getElementById('clearAll');
+
+      // FAB (busca)
+      const fab = document.getElementById('fabSearch');
+      const fabBtn = document.getElementById('fabBtn');
+      const fabPanel = document.getElementById('fabPanel');
+      const inputSearch = document.getElementById('q');
+      const clearSearchBtn = document.getElementById('clearSearch');
+      const searchStatus = document.getElementById('q-status');
+      const searchableLabels = Array.from(document.querySelectorAll('label.option[data-search]'));
+
+      // IMC
+      const hEl = document.getElementById('altura');
+      const wEl = document.getElementById('peso');
+      const imcBadge = document.getElementById('imcBadge');
+      const calcIMCBtn = document.getElementById('calcIMC');
+
+      // Abre/fecha FAB
+      function toggleFab(open){
+        const isOpen = open !== undefined ? open : !fab.classList.contains('open');
+        fab.classList.toggle('open', isOpen);
+        fabBtn.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen){
+          setTimeout(()=>inputSearch.focus(), 60);
+        }
+      }
+      fabBtn.addEventListener('click', () => toggleFab());
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && fab.classList.contains('open')) {
+          toggleFab(false);
+        }
+      });
+
+      // Lógica de risco
+      // Alto Risco (PNAR): total >= 10 E conter ao menos 1 item dos quadros 5/6/7.
+      // Médio Risco: 5 a 9 pontos.
+      // Baixo Risco: até 4 pontos.
+      function getLabelText(label){
+        const el = label.querySelector('.opt-text') || label;
+        return el.textContent.replace(/\s+/g,' ').trim();
+      }
+
+      function compute(){
+        const checked = form.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked');
+        let total = 0;
+        let has567 = false;
+        let fatores = [];
+
+        checked.forEach(el => {
+          const pts = Number(el.dataset.points || 0);
+          total += pts;
+          const g = el.dataset.group;
+          if (g === '5' || g === '6' || g === '7o' || g === '7c') has567 = true;
+          if (pts > 0){
+            const label = el.closest('label.option');
+            if (label){
+              const nome = getLabelText(label);
+              fatores.push(nome);
+            }
+          }
+        });
+
+        let level = 'BAIXO RISCO';
+        let badgeClass = 'risk-low';
+        let note = 'Atenção Básica com acompanhamento intercalado (enfermeiro e médico).';
+        let conduta = `
+          <ul>
+            <li>Pré-natal na Atenção Básica.</li>
+            <li>Consultas intercaladas entre enfermeiro e médico.</li>
+            <li>Educação em saúde e sinais de alarme.</li>
+          </ul>
+        `;
+
+        if (total >= 10 && has567){
+          level = 'ALTO RISCO';
+          badgeClass = 'risk-high';
+          note = 'Encaminhar para serviço ambulatorial de Alto Risco (PNAR).';
+          conduta = `
+            <ul>
+              <li>Encaminhar ao PNAR/serviço ambulatorial de alto risco.</li>
+              <li>Manter pré-natal compartilhado com a Atenção Básica.</li>
+              <li>Priorizar interconsultas e orientar sinais de alarme.</li>
+              <li>Agendar em menor tempo possível se houver gravidade clínica.</li>
+            </ul>
+          `;
+        } else if (total >= 5 && total <= 9){
+          level = 'MÉDIO RISCO';
+          badgeClass = 'risk-mid';
+          note = 'Pré-natal na Atenção Básica com intercalamento médico/enfermeiro.';
+          conduta = `
+            <ul>
+              <li>Seguir na Atenção Básica com consultas intercaladas (médico/enfermeiro).</li>
+              <li>Reavaliar critérios a cada consulta.</li>
+              <li>Se surgirem critérios de alto risco, encaminhar ao PNAR.</li>
+            </ul>
+          `;
+        }
+
+        // Atualiza UI
+        pointsEl.textContent = total;
+        riskBadge.className = 'chip ' + (badgeClass);
+        riskBadge.textContent = level;
+        riskNote.textContent = note;
+
+        const resumo = fatores.length ? fatores.join(' + ') : 'Sem fatores pontuadores selecionados.';
+        relatorioEl.innerHTML = `<strong>Relatório:</strong> ${total} ponto(s): ${resumo}`;
+
+        resultPanel.style.display = 'block';
+        condutaBox.style.display = 'block';
+        condutaText.innerHTML = conduta; // FIX: exibe conduta
+      }
+
+      // Exclusões mútuas (ex.: abortos até 2 vs ≥3)
+      form.addEventListener('change', (ev) => {
+        const t = ev.target;
+        if (!(t instanceof HTMLInputElement)) return;
+
+        const exclSel = t.dataset.excludes;
+        if (exclSel && t.checked){
+          document.querySelectorAll(exclSel).forEach(el => {
+            if (el instanceof HTMLInputElement) el.checked = false;
+          });
+        }
+        compute();
+      });
+
+      // Recalcula em qualquer interação
+      form.querySelectorAll('input').forEach(i => {
+        i.addEventListener('input', compute);
+      });
+
+      // Clear all
+      clearBtn.addEventListener('click', () => {
+        form.reset();
+        document.querySelectorAll('label.option').forEach(l => l.dataset.hit = 'false');
+        inputSearch.value = '';
+        searchStatus.textContent = '';
+        imcBadge.textContent = 'IMC: —';
+        hEl.value = ''; wEl.value = '';
+        document.getElementById('resultado').style.display = 'none';
+        document.getElementById('conduta').style.display = 'none';
+      });
+
+      // Busca: só executa quando pressionar Enter
+      const normalize = (s) => (s || '')
+        .toString()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g,'')
+        .trim();
+
+      function updateSearch(){
+        const q = normalize(inputSearch.value);
+        let hits = 0;
+        // limpa destaques anteriores
+        searchableLabels.forEach(l => l.dataset.hit = 'false');
+
+        if (q.length < 2){
+          searchStatus.textContent = q.length ? 'Digite pelo menos 2 letras…' : '';
+          return;
+        }
+
+        searchableLabels.forEach(l => {
+          const txt = normalize(l.textContent) + ' ' + normalize(l.dataset.keywords || '');
+          const ok = txt.includes(q);
+          l.dataset.hit = ok ? 'true' : 'false';
+          if (ok) hits++;
+        });
+
+        searchStatus.textContent = hits ? `${hits} item(ns) encontrado(s)` : 'Nenhum item encontrado';
+
+        if (hits){
+          const first = searchableLabels.find(l => l.dataset.hit === 'true');
+          if (first){
+            first.scrollIntoView({behavior:'smooth', block:'center'});
+            const inp = first.querySelector('input');
+            if (inp) inp.focus({preventScroll:true});
+          }
+        }
+      }
+
+      // Enter para buscar (sem interromper digitação)
+      inputSearch.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter'){
+          e.preventDefault();
+          updateSearch();
+        }
+      });
+
+      clearSearchBtn.addEventListener('click', () => {
+        inputSearch.value = '';
+        searchableLabels.forEach(l => l.dataset.hit = 'false');
+        searchStatus.textContent = '';
+        // mantém o painel aberto sem scroll
+      });
+
+      // IMC
+      function parseNum(v){
+        if (!v) return NaN;
+        return Number(v.replace(',', '.'));
+      }
+      function imcToCategory(imc){
+        if (!isFinite(imc)) return null;
+        if (imc < 18.5) return "baixo";
+        if (imc < 25) return "adequado";
+        if (imc < 30) return "sobrepeso";
+        return "obesidade";
+      }
+      function selectIMC(cat){
+        if (!cat) return;
+        const radio = form.querySelector(`input[name="imc"][value="${cat}"]`);
+        if (radio){ radio.checked = true; }
+      }
+      function updateIMC(){
+        const h = parseNum(hEl.value);
+        const w = parseNum(wEl.value);
+        if (!h || !w || h <= 0) { imcBadge.textContent = 'IMC: —'; return; }
+        const imc = w / (h*h);
+        const cat = imcToCategory(imc);
+        imcBadge.textContent = `IMC: ${imc.toFixed(1)} (${cat || '—'})`;
+        selectIMC(cat);
+        compute();
+      }
+      calcIMCBtn.addEventListener('click', updateIMC);
+      hEl.addEventListener('change', updateIMC);
+      wEl.addEventListener('change', updateIMC);
+    })();
+  </script>
+</body>
+</html>
