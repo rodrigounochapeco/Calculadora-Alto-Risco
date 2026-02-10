@@ -1,898 +1,1869 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculadora • Encaminhamento para Alto Risco Gestacional (PNAR)</title>
-  <meta name="color-scheme" content="light dark" />
-  <meta name="theme-color" content="#0ea5e9" />
-  <style>
-    :root{
-      --bg: #0b1220;           /* fundo sólido escuro */
-      --panel: #0f172a;
-      --panel-2: #121a2f;      /* leve contraste entre caixas */
-      --muted: #94a3b8;
-      --text: #e5e7eb;
-      --text-strong: #f8fafc;
-      --border: #1f2a44;
-      --brand-400:#38bdf8;
-      --brand-500:#0ea5e9;
-      --brand-600:#0284c7;
-      --ok-600:#059669;
-      --warn-600:#b45309;
-      --bad-600:#b91c1c;
-      --ok-700:#047857;
-      --warn-700:#92400e;
-      --bad-700:#991b1b;
-      --chip:#111b33;
-      --chip-hover:#0e233f;
-      --focus:#22d3ee;
-      --shadow: 0 12px 32px rgba(0,0,0,.35);
-      --radius: 14px;
-    }
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg: #f6f9ff;         /* fundo sólido claro */
-        --panel: #ffffff;
-        --panel-2:#ffffff;
-        --muted: #475569;
-        --text: #0f172a;
-        --text-strong: #0b1220;
-        --border: #e5e7eb;
-        --brand-400:#38bdf8;
-        --brand-500:#0ea5e9;
-        --brand-600:#0284c7;
-        --ok-600:#059669;
-        --warn-600:#b45309;
-        --bad-600:#b91c1c;
-        --ok-700:#047857;
-        --warn-700:#92400e;
-        --bad-700:#991b1b;
-        --chip:#f1f5f9;
-        --chip-hover:#e9eef7;
-        --focus:#0284c7;
-        --shadow: 0 10px 24px rgba(2, 8, 23, .10);
-      }
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-      background: var(--bg); /* fundo sólido */
-      color:var(--text);
-      line-height:1.45;
-    }
-    a{color:var(--brand-500); text-decoration:none}
-    a:hover{text-decoration:underline}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Calculadora de Risco Gestacional</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    .wrap{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: clamp(16px, 2.2vw, 28px);
-    }
+        :root {
+            --primary: #ff6392;
+            --primary-hover: #ff4a7c;
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --surface-hover: #f8f8fa;
+            --text: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --border: #e5e5e7;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+            --radius: 16px;
+            --radius-sm: 12px;
+            --green: #34c759;
+            --yellow: #ff9500;
+            --red: #ff3b30;
+            --highlight: rgba(255, 99, 146, 0.2);
+        }
 
-    header.hero{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      margin: 8px 0 8px;
-    }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      background: color-mix(in oklab, var(--brand-500) 15%, transparent);
-      color: var(--brand-600);
-      border:1px solid color-mix(in oklab, var(--brand-500) 35%, transparent);
-      width: fit-content;
-    }
-    h1{
-      margin: 0;
-      font-size: clamp(22px, 1.9vw, 34px);
-      letter-spacing:.2px;
-      color: var(--text-strong);
-    }
-    .subtitle{
-      margin:0;
-      color: var(--muted);
-      font-size: clamp(14px, 1.1vw, 16px);
-    }
-    .top-actions{margin-top:6px}
-    .btn{
-      appearance:none; border:1px solid var(--border);
-      background: var(--panel-2); color: var(--text);
-      padding:10px 14px; border-radius:12px; font-weight:600;
-      cursor:pointer; box-shadow: var(--shadow);
-    }
-    .btn:hover{background:color-mix(in oklab, var(--panel-2) 88%, var(--brand-400))}
-    .btn:focus-visible{outline:none; box-shadow:0 0 0 3px color-mix(in oklab, var(--focus) 40%, transparent)}
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #701B7B;
+                --primary-hover: #8a2291;
+                --bg: #121212;
+                --surface: #1e1e1e;
+                --surface-hover: #2a2a2a;
+                --text: #f5f5f7;
+                --text-secondary: #a1a1a6;
+                --border: #3a3a3c;
+                --shadow: 0 2px 12px rgba(0,0,0,0.3);
+                --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+                --highlight: rgba(112, 27, 123, 0.3);
+            }
+        }
 
-    .panel{
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
+        html {
+            scroll-behavior: smooth;
+        }
 
-    /* Form */
-    form{margin-top: 12px}
-    fieldset{
-      border:1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      margin: 12px 0;
-      background: var(--panel-2);
-    }
-    legend{
-      padding: 0 8px;
-      font-weight: 800;
-      color: var(--brand-600);
-      letter-spacing:.2px;
-    }
-    .group{
-      display:grid;
-      gap:8px;
-      grid-template-columns: repeat(2, minmax(220px, 1fr));
-    }
-    .group.cols-1{grid-template-columns: 1fr}
-    .group.cols-3{grid-template-columns: repeat(3, minmax(180px, 1fr))}
-    @media (max-width: 820px){
-      .group, .group.cols-3{grid-template-columns: 1fr}
-    }
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
 
-    label.option{
-      display:flex; align-items: flex-start; gap:10px;
-      padding: 12px; border-radius: 12px;
-      border:1px solid var(--border); background: var(--chip);
-      cursor:pointer; transition: background .2s ease, border-color .2s ease, transform .05s ease;
-    }
-    label.option:hover{background: var(--chip-hover)}
-    label.option[data-hit="true"]{
-      outline:2px dashed var(--brand-500); outline-offset:2px;
-      background: color-mix(in oklab, var(--chip) 75%, var(--brand-400) 25%);
-    }
-    input[type="checkbox"], input[type="radio"]{
-      margin-top:2px; accent-color: var(--brand-600); transform: translateY(2px);
-    }
-    .opt-text{flex:1}
+        body {
+            font-family: 'Onest', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
 
-    /* Resultado (no final da página) */
-    .result{
-      display:none;
-      margin: 18px 0 14px;
-      padding: 18px;
-      gap: 14px;
-      background: var(--panel);
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-    .result-header{
-      display:flex; align-items:center; justify-content:space-between;
-      flex-wrap:wrap; gap:10px;
-    }
-    .chip{
-      display:inline-flex; align-items:center; justify-content:center;
-      font-weight:800; letter-spacing:.4px; text-transform:uppercase;
-      padding:10px 14px; border-radius: 999px; border:1px solid transparent;
-    }
-    .risk-low{ background: color-mix(in oklab, var(--ok-600) 18%, transparent); color: var(--ok-700); border-color: color-mix(in oklab, var(--ok-600) 40%, transparent)}
-    .risk-mid{ background: color-mix(in oklab, var(--warn-600) 18%, transparent); color: var(--warn-700); border-color: color-mix(in oklab, var(--warn-600) 40%, transparent)}
-    .risk-high{ background: color-mix(in oklab, var(--bad-600) 18%, transparent); color: var(--bad-700); border-color: color-mix(in oklab, var(--bad-600) 40%, transparent)}
-    .points{font-weight:700; color:var(--muted)}
-    .note{font-size: 12px; color: var(--muted)}
-    .relatorio{margin-top:8px; font-size:14px; color: var(--text)}
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
 
-    .conduta{
-      display:none;
-      margin-top:12px;
-      padding: 16px; border-radius: 12px;
-      border:1px dashed var(--border);
-      background: color-mix(in oklab, var(--panel) 88%, var(--brand-400) 12%);
-    }
-    .conduta h3{margin:0 0 8px; font-size:16px}
-    .conduta ul{margin:8px 0 0 18px}
-    .conduta li{margin:4px 0}
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 32px 24px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
 
-    .imc-tools{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top: 10px;}
-    .imc-tools input{
-      width: 120px; padding: 8px 10px; border-radius: 10px;
-      border:1px solid var(--border); background: var(--panel); color: var(--text);
-    }
-    .imc-badge{font-size:12px; color:var(--muted)}
-    .hint{font-size:12px; color:var(--muted); margin-top:6px}
+        .header-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
 
-    .sr-only{
-      position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
-      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
-    }
+        .header h1 {
+            font-size: clamp(1.5rem, 4vw, 2.25rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin-bottom: 8px;
+        }
 
-    .foot{
-      margin:18px 0 40px;
-      font-size:12px; color:var(--muted);
-      display:flex; flex-wrap:wrap; gap:6px; align-items:center;
-    }
-    .divider{width:1px; height:12px; background: var(--border); margin: 0 6px}
+        .header > p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+        }
 
-    /* FAB de busca */
-    .fab-search{
-      position: fixed; right: 22px; bottom: 22px; z-index: 1000;
-      display:flex; flex-direction:column; align-items:flex-end; gap:8px;
-    }
-    .fab-btn{
-      width:52px; height:52px; border-radius:50%;
-      border:none; cursor:pointer; color:#fff; background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
-      box-shadow: 0 10px 30px rgba(14,165,233,.35);
-      display:grid; place-items:center; transition: transform .12s ease;
-    }
-    .fab-btn:hover{transform: translateY(-1px)}
-    .fab-panel{
-      display:none; width: min(86vw, 420px);
-      background: var(--panel); color: var(--text);
-      border:1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow);
-      padding: 10px; gap:8px;
-    }
-    .fab-search.open .fab-panel{display:flex; align-items:center}
-    .fab-panel input{
-      flex:1 1 auto; padding: 10px 12px; border-radius: 10px;
-      border:1px solid var(--border); background: var(--panel-2); color:var(--text); outline:none;
-    }
-    .fab-panel input:focus{box-shadow:0 0 0 3px color-mix(in oklab, var(--focus) 35%, transparent)}
-    .fab-clear{
-      appearance:none; border:1px solid var(--border); background: var(--panel-2);
-      color: var(--muted); border-radius:10px; padding:8px 10px; cursor:pointer;
-    }
-    .fab-status{font-size:12px; color:var(--muted); margin-right:4px}
-  </style>
+        .header-guidelines {
+            background: var(--surface-hover);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            margin-top: 16px;
+            text-align: left;
+            border-left: 4px solid var(--primary);
+        }
+
+        .header-guidelines-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: white;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            padding: 12px 18px;
+            border-radius: 10px;
+            width: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .header-guidelines ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .header-guidelines li {
+            font-size: 0.85rem;
+            color: var(--text);
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .header-guidelines li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        .header-protocol-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .header-protocol-link:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Bento Grid */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .bento-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            grid-column: 1 / -1;
+        }
+
+        .section-card.half {
+            grid-column: span 1;
+        }
+
+        @media (min-width: 768px) {
+            .section-card.half {
+                grid-column: span 1;
+            }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .section-title-group {
+            flex: 1;
+        }
+
+        .section-category {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-secondary);
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        /* Items Grid */
+        .items-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 480px) {
+            .items-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .items-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Checkbox/Radio Card Items */
+        .item-card {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--surface-hover);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .item-card:hover {
+            border-color: var(--primary);
+            background: var(--surface);
+        }
+
+        .item-card:focus-within {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .item-card.selected {
+            border-color: var(--primary);
+            background: var(--highlight);
+        }
+
+        .item-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .item-card.highlight {
+            animation: highlightPulse 1.5s ease-out;
+        }
+
+        @keyframes highlightPulse {
+            0% { box-shadow: 0 0 0 0 var(--primary); }
+            50% { box-shadow: 0 0 0 8px transparent; }
+            100% { box-shadow: 0 0 0 0 transparent; }
+        }
+
+        .item-card input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .item-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            background: var(--surface);
+        }
+
+        .item-card.selected .item-checkbox {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .item-checkbox i {
+            font-size: 0.75rem;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s ease;
+        }
+
+        .item-card.selected .item-checkbox i {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .item-points {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: white;
+            background: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            min-width: 42px;
+            text-align: center;
+        }
+
+        /* IMC Calculator */
+        .imc-calculator {
+            background: var(--surface-hover);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--border);
+        }
+
+        .imc-calculator.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .imc-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .imc-inputs {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 1rem;
+            background: var(--surface);
+            color: var(--text);
+            transition: border-color 0.2s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .imc-result {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--border);
+        }
+
+        .imc-result.has-value {
+            border-color: var(--primary);
+        }
+
+        .imc-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .imc-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .imc-category {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* IMC Quick Select */
+        .imc-quick-select {
+            background: var(--surface-hover);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--border);
+        }
+
+        .imc-quick-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .imc-quick-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .imc-quick-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .imc-quick-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .imc-quick-btn:hover {
+            border-color: var(--primary);
+            background: var(--surface-hover);
+        }
+
+        .imc-quick-btn.selected {
+            border-color: var(--primary);
+            background: var(--highlight);
+        }
+
+        .imc-quick-btn:focus {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .imc-quick-btn .points-badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+            background: var(--primary);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .imc-quick-btn.normal-weight {
+            background: rgba(52, 199, 89, 0.1);
+            border-color: var(--green);
+        }
+
+        .imc-quick-btn.normal-weight:hover {
+            background: rgba(52, 199, 89, 0.2);
+        }
+
+        /* Results Section - Compact */
+        .results-section {
+            position: sticky;
+            bottom: 16px;
+            z-index: 100;
+            margin-top: 24px;
+        }
+
+        .results-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            position: relative;
+        }
+
+        .results-main {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .results-score {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .results-classification {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .results-classification.low {
+            background: rgba(52, 199, 89, 0.15);
+            color: var(--green);
+            border: 2px solid var(--green);
+        }
+
+        .results-classification.medium {
+            background: rgba(255, 149, 0, 0.15);
+            color: var(--yellow);
+            border: 2px solid var(--yellow);
+        }
+
+        .results-classification.high {
+            background: rgba(255, 59, 48, 0.15);
+            color: var(--red);
+            border: 2px solid var(--red);
+        }
+
+        .results-conduct {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 14px;
+            background: var(--surface-hover);
+            border-radius: var(--radius-sm);
+        }
+
+        .conduct-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .conduct-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .results-details {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            padding-right: 60px;
+        }
+
+        .results-items {
+            flex: 1;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            max-height: 60px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .results-items::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .results-items::-webkit-scrollbar-track {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .results-items::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:focus {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--surface-hover);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+
+        /* Search Button - Bottom Right Corner of Results Card */
+        .search-btn {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+
+        .search-btn:hover {
+            background: var(--primary-hover);
+            transform: scale(1.05);
+        }
+
+        .search-btn:focus {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* Search Modal */
+        .search-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 80px 16px;
+        }
+
+        .search-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .search-modal {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 600px;
+            transform: translateY(-20px);
+            transition: transform 0.2s ease;
+        }
+
+        .search-overlay.active .search-modal {
+            transform: translateY(0);
+        }
+
+        .search-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-header i {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 1.1rem;
+            color: var(--text);
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-close {
+            background: var(--surface-hover);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .search-close:hover {
+            background: var(--border);
+        }
+
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .search-result-item {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .search-result-item:hover {
+            background: var(--surface-hover);
+        }
+
+        .search-result-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .search-result-group {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .search-no-results {
+            padding: 24px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 16px;
+            margin-top: 32px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .footer-disclaimer {
+            max-width: 700px;
+            margin: 0 auto 24px auto;
+            padding: 16px;
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .footer-disclaimer i {
+            color: var(--yellow);
+            margin-right: 6px;
+        }
+
+        .footer-reference {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 14px 18px;
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .footer-reference-title {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-reference-content {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .footer-reference-content strong {
+            color: var(--text);
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+                font-size: 12pt;
+            }
+
+            .search-btn, .search-overlay, .btn, .results-actions {
+                display: none !important;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .header, .section-card, .results-card, .footer-reference {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                break-inside: avoid;
+            }
+
+            .results-section {
+                position: static;
+            }
+
+            .item-card:not(.selected) {
+                display: none;
+            }
+
+            .item-card.selected {
+                border: 1px solid #333;
+                background: #f5f5f5;
+            }
+
+            .items-grid {
+                display: block;
+            }
+
+            .item-card {
+                margin-bottom: 8px;
+            }
+
+            .imc-calculator, .imc-quick-select {
+                border: 1px solid #ccc;
+            }
+
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #333;
+            }
+
+            .print-date {
+                font-size: 10pt;
+                color: #666;
+            }
+
+            .header-guidelines, .header-protocol-link {
+                display: none;
+            }
+        }
+
+        .print-header {
+            display: none;
+        }
+
+        /* Keyboard shortcuts hint */
+        .kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive adjustments for compact results */
+        @media (max-width: 600px) {
+            .results-main {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-right: 60px;
+            }
+            
+            .results-conduct {
+                width: 100%;
+            }
+            
+            .results-details {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-right: 0;
+            }
+            
+            .results-actions {
+                width: 100%;
+                justify-content: stretch;
+                margin-top: 8px;
+            }
+            
+            .results-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .search-btn {
+                bottom: auto;
+                top: 16px;
+                right: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <a class="sr-only" href="#resultado">Pular para o resultado</a>
-  <div class="wrap">
-    <header class="hero">
-      <div class="badge" aria-hidden="true">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5a2 2 0 0 0-2 2v14l4-3h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/></svg>
-        Calculadora clínica
-      </div>
-      <h1>Critérios para encaminhamento – Gestação de Alto Risco (PNAR)</h1>
-      <p class="subtitle">Ferramenta objetiva para médicos generalistas. Marque os critérios e veja o risco e a conduta.</p>
-      <div class="top-actions">
-        <button type="button" class="btn" id="clearAll">Limpar tudo</button>
-      </div>
-    </header>
-
-    <form id="form" novalidate>
-      <!-- 1. Idade Materna -->
-      <fieldset class="panel">
-        <legend>1) Idade materna</legend>
-        <div class="group cols-3">
-          <label class="option" data-search>
-            <input type="radio" name="idade" value="<15" data-points="1" data-group="1" />
-            <div class="opt-text"><div><strong>&lt; 15 anos</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="radio" name="idade" value="15-34" data-points="0" data-group="1" />
-            <div class="opt-text"><div><strong>15 a 34 anos</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="radio" name="idade" value=">35" data-points="1" data-group="1" />
-            <div class="opt-text"><div><strong>&gt; 35 anos</strong></div></div>
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- 2A. Situação Familiar (separado) -->
-      <fieldset class="panel">
-        <legend>2A) Situação familiar</legend>
-        <div class="group cols-3">
-          <label class="option" data-search>
-            <input type="radio" name="sit_fam" value="estavel" data-points="0" data-group="2">
-            <div class="opt-text"><div><strong>Estável</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="radio" name="sit_fam" value="instavel" data-points="1" data-group="2">
-            <div class="opt-text"><div><strong>Instável</strong></div></div>
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- 2B. Aceitação (separado) -->
-      <fieldset class="panel">
-        <legend>2B) Aceitação</legend>
-        <div class="group cols-3">
-          <label class="option" data-search>
-            <input type="radio" name="aceita" value="aceita" data-points="0" data-group="2">
-            <div class="opt-text"><div><strong>Aceita</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="radio" name="aceita" value="nao-aceita" data-points="1" data-group="2">
-            <div class="opt-text"><div><strong>Não aceita</strong></div></div>
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- 3. Escolaridade -->
-      <fieldset class="panel">
-        <legend>3) Escolaridade</legend>
-        <div class="group cols-3">
-          <label class="option" data-search>
-            <input type="radio" name="letramento" value="alfabetizada" data-points="0" data-group="3">
-            <div class="opt-text"><div><strong>Sabe ler e escrever</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="radio" name="letramento" value="nao-alfabetizada" data-points="1" data-group="3">
-            <div class="opt-text"><div><strong>Não sabe ler/escrever</strong></div></div>
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- 4. Hábitos -->
-      <fieldset class="panel">
-        <legend>4) Hábitos</legend>
-        <div class="group cols-3">
-          <label class="option" data-search>
-            <input type="radio" name="tabagismo" value="nao" data-points="0" data-group="4">
-            <div class="opt-text"><div><strong>Tabagismo: Não</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="radio" name="tabagismo" value="sim" data-points="2" data-group="4">
-            <div class="opt-text"><div><strong>Tabagismo: Sim</strong></div></div>
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- 5. Avaliação Nutricional -->
-      <fieldset class="panel">
-        <legend>5) Avaliação nutricional</legend>
-        <div class="group cols-3" role="group" aria-label="Classificação de IMC e condições associadas">
-          <label class="option" data-search data-keywords="baixo peso; imc menor que 18,5; emagrecida">
-            <input type="radio" name="imc" value="baixo" data-points="1" data-group="5">
-            <div class="opt-text"><div><strong>Baixo peso (IMC &lt; 18,5)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="peso adequado; eutrofia">
-            <input type="radio" name="imc" value="adequado" data-points="0" data-group="5">
-            <div class="opt-text"><div><strong>Peso adequado (IMC 18,5–24,9)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="sobrepeso; imc 25 a 29,9">
-            <input type="radio" name="imc" value="sobrepeso" data-points="1" data-group="5">
-            <div class="opt-text"><div><strong>Sobrepeso (IMC 25–29,9)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="obesidade; obesa; imc 30 ou mais">
-            <input type="radio" name="imc" value="obesidade" data-points="5" data-group="5">
-            <div class="opt-text"><div><strong>Obesidade (IMC ≥ 30)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="anemia; peso inadequado; ferritina; hb baixa">
-            <input type="checkbox" name="anemia_ou_peso_inadequado" value="1" data-points="1" data-group="5">
-            <div class="opt-text"><div><strong>Peso inadequado e/ou Anemia</strong></div></div>
-          </label>
+    <div class="container">
+        <div class="print-header">
+            <h1>Relatório de Risco Gestacional</h1>
+            <p class="print-date" id="printDate"></p>
         </div>
 
-        <div class="imc-tools" aria-live="polite">
-          <label for="altura">Altura (m)</label>
-          <input id="altura" type="text" inputmode="decimal" placeholder="1,60" aria-describedby="imcBadge">
-          <label for="peso">Peso (kg)</label>
-          <input id="peso" type="text" inputmode="decimal" placeholder="60,0" aria-describedby="imcBadge">
-          <button class="btn" type="button" id="calcIMC">Calcular IMC</button>
-          <span id="imcBadge" class="imc-badge">IMC: —</span>
-        </div>
-        <p class="hint">Dica: o IMC é opcional. Você também pode marcar a categoria diretamente.</p>
-      </fieldset>
+        <header class="header">
+            <i class="fa-solid fa-triangle-exclamation header-icon" aria-hidden="true"></i>
+            <h1>Calculadora de Risco Gestacional</h1>
+            <p>Sistema de pontuação para estratificação de risco na gestação. Selecione os critérios aplicáveis para calcular o risco.</p>
+            
+            <div class="header-guidelines">
+                <div class="header-guidelines-title">
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    Orientações Importantes
+                </div>
+                <ul>
+                    <li>A estratificação de risco é contínua e deve ser realizada em todos os atendimentos.</li>
+                    <li>Quanto maior o número de fatores de risco, maior o risco obstétrico individualizado.</li>
+                    <li>Identificar as mulheres com maior risco obstétrico reduz a mortalidade materna e perinatal.</li>
+                </ul>
+                <a href="https://antigo.saude.sc.gov.br/index.php/documentos/informacoes-gerais/regulacao-1/acessos-por-especialidade/consulta-adulto/24421-consulta-em-ginecologia-gestante-de-alto-risco-pre-natal-de-alto-risco/file" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="header-protocol-link">
+                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                    Protocolo de Regulação de Pré-Natal de Alto Risco
+                </a>
+            </div>
+        </header>
 
-      <!-- 6. Antecedentes Obstétricos -->
-      <fieldset class="panel">
-        <legend>6) Antecedentes obstétricos</legend>
-        <div class="group">
-          <label class="option" data-search data-keywords="até dois abortos">
-            <input type="checkbox" name="aborto_ate2" data-points="5" data-group="6" data-excludes="#aborto3plus">
-            <div class="opt-text"><div><strong>Abortos até 2</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="três ou mais abortos; recorrente">
-            <input id="aborto3plus" type="checkbox" name="aborto_3plus" data-points="10" data-group="6" data-excludes="[name='aborto_ate2']">
-            <div class="opt-text"><div><strong>Abortos espontâneos (≥ 3)</strong></div></div>
-          </label>
+        <main class="bento-grid" id="mainGrid" role="form" aria-label="Formulário de avaliação de risco gestacional">
+            <!-- Content will be generated by JavaScript -->
+        </main>
 
-          <label class="option" data-search>
-            <input type="checkbox" data-points="5" data-group="6">
-            <div class="opt-text"><div><strong>Natimorto</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="prematuro; pré-termo">
-            <input type="checkbox" data-points="5" data-group="6">
-            <div class="opt-text"><div><strong>Prematuro</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="óbito fetal intraútero">
-            <input type="checkbox" data-points="5" data-group="6">
-            <div class="opt-text"><div><strong>Óbito fetal</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="pré-eclampsia; pre eclampsia">
-            <input type="checkbox" data-points="10" data-group="6">
-            <div class="opt-text"><div><strong>Pré-eclâmpsia</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="checkbox" data-points="10" data-group="6">
-            <div class="opt-text"><div><strong>Eclâmpsia</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="checkbox" data-points="10" data-group="6">
-            <div class="opt-text"><div><strong>Placenta prévia (antecedente)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="DPP; descolamento">
-            <input type="checkbox" data-points="10" data-group="6">
-            <div class="opt-text"><div><strong>Descolamento prematuro de placenta</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="colo; incompetência istmo cervical">
-            <input type="checkbox" data-points="10" data-group="6">
-            <div class="opt-text"><div><strong>Incompetência ístmo-cervical (antecedente)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="restrição crescimento; rciu">
-            <input type="checkbox" data-points="5" data-group="6">
-            <div class="opt-text"><div><strong>RCIU (antecedente)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="malformação; defeito fetal">
-            <input type="checkbox" data-points="5" data-group="6">
-            <div class="opt-text"><div><strong>Malformação fetal (antecedente)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="intervalo interpartal curto; spacing">
-            <input type="checkbox" data-points="2" data-group="6">
-            <div class="opt-text"><div><strong>Último parto há &lt; 12 meses</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="prematuro; histórico">
-            <input type="checkbox" data-points="10" data-group="6">
-            <div class="opt-text"><div><strong>+1 filho prematuro</strong></div></div>
-          </label>
-        </div>
-      </fieldset>
+        <section class="results-section" aria-live="polite" aria-atomic="true">
+            <div class="results-card">
+                <button type="button" class="search-btn" id="searchBtn" aria-label="Abrir busca (pressione Ctrl+F)">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                </button>
+                <div class="results-main">
+                    <div class="results-score">
+                        <span class="score-value" id="totalScore">0</span>
+                        <span class="score-label">pontos</span>
+                    </div>
+                    <div class="results-classification low" id="classification">
+                        <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
+                        <span id="classificationText">Risco Habitual</span>
+                    </div>
+                    <div class="results-conduct">
+                        <div class="conduct-title">Conduta Sugerida</div>
+                        <div class="conduct-text" id="conductText">Acompanhamento na Atenção Primária à Saúde (APS)</div>
+                    </div>
+                </div>
+                <div class="results-details">
+                    <div class="results-items" id="selectedItems">
+                        <em>Nenhum critério selecionado</em>
+                    </div>
+                    <div class="results-actions">
+                        <button type="button" class="btn btn-secondary" id="clearBtn" aria-label="Limpar todos os campos">
+                            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+                            Limpar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-      <!-- 7. Patologias de Risco Atual – Obstétricas / Ginecológicas -->
-      <fieldset class="panel">
-        <legend>7) Patologias de risco atual – Obstétricas / Ginecológicas</legend>
-        <div class="group">
-          <label class="option" data-search>
-            <input type="checkbox" data-points="5" data-group="7o">
-            <div class="opt-text"><div><strong>Ameaça de abortamento</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="anomalia trato geniturinário">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Anomalias do trato geniturinário</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Placenta prévia (atual)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="câncer; onco">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Câncer materno</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="hemolítica; isoimune fetal">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Doença hemolítica</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="fertilidade; reprodução assistida">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Esterilidade tratada</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="isoimunização; rh; anti-d">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Isoimunização</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="neoplasia ginecológica">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Neoplasias ginecológicas</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="congênitas; malformação fetal">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Malformações congênitas</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="restrição crescimento; RCIU atual">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Restrição de crescimento intrauterino</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="liq; polidrâmnio; oligodrâmnio">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Polidrâmnio ou oligodrâmnio</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="papanicolau; nic I; nic II; nic III; colpo">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Citologia cervical anormal (NIC I–III)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="hipertensão gestacional; pré-eclâmpsia atual">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Doença hipertensiva da gestação</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="DMG; hiperglicemia gestacional">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Diabetes gestacional</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="gêmeos; múltiplos">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Gestação gemelar</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="colo; cerclagem; incompetência istmo cervical">
-            <input type="checkbox" data-points="10" data-group="7o">
-            <div class="opt-text"><div><strong>Incompetência ístmo-cervical (atual)</strong></div></div>
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- 7. Patologias de Risco Atual – Clínicas / Cirúrgicas -->
-      <fieldset class="panel">
-        <legend>7) Patologias de risco atual – Clínicas / Cirúrgicas</legend>
-        <div class="group">
-          <label class="option" data-search data-keywords="cardio; cardiopatia; coração">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Cardiopatias</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="checkbox" data-points="5" data-group="7c">
-            <div class="opt-text"><div><strong>Varizes acentuadas</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="pulmão; asma grave; dpoc grave">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Pneumopatia grave</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="diabetes tipo 1; tipo 2; DM prévio">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Diabetes mellitus (prévio)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="autoimune; lúpus; colagenose">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Doenças autoimunes (colagenoses)</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="saúde mental; depressão; psicose">
-            <input type="checkbox" data-points="5" data-group="7c">
-            <div class="opt-text"><div><strong>Doença psiquiátrica</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="renal crônica; rim">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Doença renal grave</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="epilepsia; convulsão; neurológica">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Epilepsia / doença neurológica</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="hemopatia; anemia falciforme; talassemia">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Hemopatias</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="hipertensão arterial; HAS">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Hipertensão arterial</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="ITU repetição; pielonefrite; 3 episodios">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Infecção urinária de repetição (pielonefrite ou ≥ 3 episódios)</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Infecções graves</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="HIV; aids; retroviral">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>HIV/AIDS</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Sífilis</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Tuberculose</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Toxoplasmose</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="dependência química; drogas ilícitas">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Dependência de drogas</strong></div></div>
-          </label>
-          <label class="option" data-search>
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Alcoolismo</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="trombofilia; trombose; anticoagulação">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Trombofilias</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="endócrino; pituitária; suprarrenal">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Endocrinopatias</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="tireoide; hipo; hiper">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Alterações da tireoide</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="saúde bucal; gengivite; periodontite">
-            <input type="checkbox" data-points="5" data-group="7c">
-            <div class="opt-text"><div><strong>Doenças infecciosas bucais</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="neoplasia; câncer">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Neoplasias</strong></div></div>
-          </label>
-          <label class="option" data-search data-keywords="inflamatória; doença inflamatória">
-            <input type="checkbox" data-points="10" data-group="7c">
-            <div class="opt-text"><div><strong>Doenças inflamatórias</strong></div></div>
-          </label>
-        </div>
-      </fieldset>
-    </form>
-
-    <!-- RESULTADO (no final da página) -->
-    <section id="resultado" class="result" aria-live="polite" aria-atomic="true">
-      <div class="result-header">
-        <div class="score">
-          <span id="riskBadge" class="chip" aria-label="Nível de risco"></span>
-          <span class="points"><strong>Pontos:</strong> <span id="pointsTotal">0</span></span>
-        </div>
-        <div class="note" id="riskNote"></div>
-      </div>
-      <div id="relatorio" class="relatorio"></div>
-      <div id="conduta" class="conduta" role="dialog" aria-labelledby="conduta-title" aria-describedby="conduta-text">
-        <h3 id="conduta-title">Conduta</h3>
-        <div id="conduta-text"></div>
-      </div>
-    </section>
-
-    <footer class="foot">
-      <span>• Processamento local, sem coleta de dados (LGPD).</span>
-      <span class="divider" aria-hidden="true"></span>
-      <span>• Apoio à decisão. Não substitui o julgamento clínico.</span>
-    </footer>
-  </div>
-
-  <!-- Botão de busca flutuante -->
-  <div class="fab-search" id="fabSearch" aria-live="polite">
-    <div class="fab-panel" id="fabPanel" role="dialog" aria-modal="false" aria-label="Buscar na página">
-      <input id="q" name="q" type="search" placeholder="Digite e pressione Enter para buscar"
-             autocomplete="off" spellcheck="false" aria-describedby="q-status" />
-      <button class="fab-clear" type="button" id="clearSearch" title="Limpar busca">Limpar</button>
+        <footer class="footer">
+            <div class="footer-disclaimer">
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                Ferramenta de apoio baseada em pontuação fornecida; não substitui avaliação clínica. Validar com protocolo institucional vigente.
+            </div>
+            
+            <div class="footer-reference">
+                <div class="footer-reference-title">
+                    <i class="fa-solid fa-book" aria-hidden="true"></i>
+                    Referência
+                </div>
+                <div class="footer-reference-content">
+                    <strong>SANTA CATARINA.</strong> Secretaria de Estado da Saúde. <em>Instrumento de Estratificação de Risco Gestacional.</em> 3. ed. Florianópolis: SES/SC, jul. 2025. Disponível em: Rua Esteves Júnior, 390, Centro, Florianópolis-SC. © 2025 SES/SC.
+                </div>
+            </div>
+        </footer>
     </div>
-    <span id="q-status" class="fab-status" aria-live="polite"></span>
-    <button type="button" class="fab-btn" id="fabBtn" aria-expanded="false" aria-controls="fabPanel" aria-label="Abrir busca">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 5 1.5-1.5-5-5Zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14Z"/></svg>
-    </button>
-  </div>
 
-  <script>
-    (function(){
-      const form = document.getElementById('form');
-      const resultPanel = document.querySelector('.result');
-      const condutaBox = document.getElementById('conduta');
-      const riskBadge = document.getElementById('riskBadge');
-      const pointsEl = document.getElementById('pointsTotal');
-      const riskNote = document.getElementById('riskNote');
-      const condutaText = document.getElementById('conduta-text');
-      const relatorioEl = document.getElementById('relatorio');
-      const clearBtn = document.getElementById('clearAll');
+    <div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-label="Buscar critérios">
+        <div class="search-modal">
+            <div class="search-header">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Buscar critérios..." aria-label="Buscar critérios">
+                <button type="button" class="search-close" id="searchClose">ESC</button>
+            </div>
+            <div class="search-results" id="searchResults" role="listbox">
+                <div class="search-no-results">Digite para buscar critérios...</div>
+            </div>
+        </div>
+    </div>
 
-      // FAB (busca)
-      const fab = document.getElementById('fabSearch');
-      const fabBtn = document.getElementById('fabBtn');
-      const fabPanel = document.getElementById('fabPanel');
-      const inputSearch = document.getElementById('q');
-      const clearSearchBtn = document.getElementById('clearSearch');
-      const searchStatus = document.getElementById('q-status');
-      const searchableLabels = Array.from(document.querySelectorAll('label.option[data-search]'));
-
-      // IMC
-      const hEl = document.getElementById('altura');
-      const wEl = document.getElementById('peso');
-      const imcBadge = document.getElementById('imcBadge');
-      const calcIMCBtn = document.getElementById('calcIMC');
-
-      // Abre/fecha FAB
-      function toggleFab(open){
-        const isOpen = open !== undefined ? open : !fab.classList.contains('open');
-        fab.classList.toggle('open', isOpen);
-        fabBtn.setAttribute('aria-expanded', String(isOpen));
-        if (isOpen){
-          setTimeout(()=>inputSearch.focus(), 60);
+    <script>
+        // Normalize text for accent-insensitive search
+        function normalizeText(text) {
+            return text
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
         }
-      }
-      fabBtn.addEventListener('click', () => toggleFab());
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && fab.classList.contains('open')) {
-          toggleFab(false);
-        }
-      });
 
-      // Lógica de risco
-      // Alto Risco (PNAR): total >= 10 E conter ao menos 1 item dos quadros 5/6/7.
-      // Médio Risco: 5 a 9 pontos.
-      // Baixo Risco: até 4 pontos.
-      function getLabelText(label){
-        const el = label.querySelector('.opt-text') || label;
-        return el.textContent.replace(/\s+/g,' ').trim();
-      }
-
-      function compute(){
-        const checked = form.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked');
-        let total = 0;
-        let has567 = false;
-        let fatores = [];
-
-        checked.forEach(el => {
-          const pts = Number(el.dataset.points || 0);
-          total += pts;
-          const g = el.dataset.group;
-          if (g === '5' || g === '6' || g === '7o' || g === '7c') has567 = true;
-          if (pts > 0){
-            const label = el.closest('label.option');
-            if (label){
-              const nome = getLabelText(label);
-              fatores.push(nome);
+        // Data Structure - Clinical criteria with exact points
+        const criteriaData = [
+            {
+                id: 'grupo1',
+                title: 'Condições Individuais/Sociais',
+                category: 'Grupo 1',
+                icon: 'fa-user',
+                items: [
+                    { id: 'idade_menor_15', name: 'Idade < 15 anos', shortName: 'Idade < 15 anos', points: 2, keywords: 'adolescente jovem menor idade criança', exclusion: 'idade_maior_40' },
+                    { id: 'idade_maior_40', name: 'Idade > 40 anos', shortName: 'Idade > 40 anos', points: 2, keywords: 'idosa madura avançada tardia', exclusion: 'idade_menor_15' },
+                    { id: 'raca_negra', name: 'Raça negra (preta/parda)', shortName: 'Raça negra', points: 2, keywords: 'afrodescendente etnia cor' },
+                    { id: 'baixa_escolaridade', name: 'Baixa escolaridade (< 5 anos)', shortName: 'Baixa escolaridade', points: 2, keywords: 'estudo educação analfabeta' },
+                    { id: 'tabagista', name: 'Tabagista ativa', shortName: 'Tabagista', points: 2, keywords: 'cigarro fumo fumante nicotina' },
+                    { id: 'violencia', name: 'Indícios de violência', shortName: 'Violência', points: 2, keywords: 'agressão abuso doméstica física psicológica' },
+                    { id: 'vulnerabilidade', name: 'Vulnerabilidade social (imigrante/rua/indígena/quilombola)', shortName: 'Vulnerabilidade social', points: 2, keywords: 'moradora situação pobreza marginalizada' },
+                    { id: 'imc_baixo', name: 'Baixo peso (IMC < 18)', shortName: 'Baixo peso', points: 2, keywords: 'magreza desnutrição peso', isIMC: true, imcRange: [0, 18] },
+                    { id: 'imc_sobrepeso', name: 'Sobrepeso (IMC 25-29.9)', shortName: 'Sobrepeso', points: 1, keywords: 'peso acima gordo', isIMC: true, imcRange: [25, 30] },
+                    { id: 'imc_obesidade', name: 'Obesidade (IMC 30-39.9)', shortName: 'Obesidade', points: 4, keywords: 'obesa peso mórbida', isIMC: true, imcRange: [30, 40] },
+                    { id: 'imc_obesidade_g3', name: 'Obesidade Grau 3 (IMC ≥ 40)', shortName: 'Obesidade Grau 3', points: 10, keywords: 'super obesa mórbida grau três', isIMC: true, imcRange: [40, Infinity] }
+                ]
+            },
+            {
+                id: 'grupo2',
+                title: 'História Reprodutiva Anterior',
+                category: 'Grupo 2',
+                icon: 'fa-clock-rotate-left',
+                items: [
+                    { id: 'abortamento_habitual', name: 'Abortamento habitual (≥ 2 consecutivos)', shortName: 'Abortamento habitual', points: 2, keywords: 'aborto perda gestação recorrente' },
+                    { id: 'acretismo', name: 'Acretismo placentário', shortName: 'Acretismo placentário', points: 2, keywords: 'placenta invasiva percreta increta' },
+                    { id: 'ciur_anterior', name: 'Restrição crescimento (CIUR)', shortName: 'CIUR anterior', points: 2, keywords: 'rciu crescimento intrauterino retardo' },
+                    { id: 'prematuro_34', name: 'Parto pré-termo > 34 sem', shortName: 'Parto pré-termo > 34s', points: 2, keywords: 'prematuro antecipado semanas', exclusion: 'prematuro_menor_34' },
+                    { id: 'prematuro_menor_34', name: 'Parto pré-termo ≤ 34 sem', shortName: 'Parto pré-termo ≤ 34s', points: 10, keywords: 'prematuro extremo muito semanas', exclusion: 'prematuro_34' },
+                    { id: 'hipertensiva_desfecho', name: 'Doença hipertensiva com desfecho ruim (Hellp/Eclâmpsia/UTI/Óbito)', shortName: 'Doença hipertensiva prévia', points: 10, keywords: 'pressão alta pré-eclâmpsia síndrome eclampsia pre-eclampsia' },
+                    { id: 'obito_fetal', name: 'Óbito fetal causa inexplicada', shortName: 'Óbito fetal prévio', points: 10, keywords: 'morte natimorto perda' },
+                    { id: 'incompetencia_istmo', name: 'Incompetência istmo cervical', shortName: 'Incompetência istmo cervical', points: 10, keywords: 'colo curto dilatação insuficiência cervical' },
+                    { id: 'psicose_puerperal', name: 'Psicose puerperal', shortName: 'Psicose puerperal', points: 10, keywords: 'loucura depressão pós-parto mental' },
+                    { id: 'dpp_anterior', name: 'Descolamento prematuro placenta (DPP)', shortName: 'DPP anterior', points: 10, keywords: 'descolamento sangramento' },
+                    { id: 'cardiomiopatia_periparto', name: 'Cardiomiopatia periparto', shortName: 'Cardiomiopatia periparto', points: 10, keywords: 'coração insuficiência cardíaca' },
+                    { id: 'isoimunizacao_g2', name: 'Isoimunização Rh', shortName: 'Isoimunização Rh (G2)', points: 5, keywords: 'rh negativo incompatibilidade sanguínea eritroblastose' }
+                ]
+            },
+            {
+                id: 'grupo3',
+                title: 'Intercorrências na Gestação Atual',
+                category: 'Grupo 3',
+                icon: 'fa-baby',
+                items: [
+                    { id: 'hipertensiva_atual', name: 'Doença hipertensiva / Pré-eclâmpsia', shortName: 'Doença hipertensiva atual', points: 10, keywords: 'pressão alta eclâmpsia hipertensão eclampsia pre-eclampsia' },
+                    { id: 'dmg_insulina', name: 'Diabetes gestacional com insulina', shortName: 'DMG com insulina', points: 10, keywords: 'açúcar glicose glicemia' },
+                    { id: 'itu_pielonefrite', name: 'Infecção urinária repetição (≥3) ou Pielonefrite', shortName: 'ITU repetição/Pielonefrite', points: 10, keywords: 'urina infecção bexiga rim cistite' },
+                    { id: 'calculo_renal', name: 'Cálculo renal com obstrução', shortName: 'Cálculo renal obstrutivo', points: 10, keywords: 'pedra rim nefrolitíase' },
+                    { id: 'ciur_atual', name: 'CIUR atual', shortName: 'CIUR atual', points: 10, keywords: 'rciu crescimento restrito feto pequeno' },
+                    { id: 'macrossomia', name: 'Macrossomia/Feto > p90', shortName: 'Macrossomia', points: 10, keywords: 'grande feto gig peso' },
+                    { id: 'liquido_amniotico', name: 'Polidrâmnio/Oligodrâmnio', shortName: 'Alteração líquido amniótico', points: 10, keywords: 'líquido amniótico muito pouco ila polihidramnio oligohidramnio polidramnio oligodramnio' },
+                    { id: 'colo_curto_atual', name: 'Colo curto (< 18 sem) / Incompetência istmo cervical', shortName: 'Colo curto/IIC', points: 10, keywords: 'colo uterino curto cerclagem' },
+                    { id: 'placenta_previa', name: 'Placenta prévia', shortName: 'Placenta prévia', points: 10, keywords: 'placenta baixa inserção sangramento previa' },
+                    { id: 'hepatopatias', name: 'Hepatopatias (colestase/hepatites)', shortName: 'Hepatopatias', points: 10, keywords: 'fígado hepática icterícia coceira' },
+                    { id: 'anemia_grave', name: 'Anemia grave (Hb<8) ou refratária', shortName: 'Anemia grave', points: 10, keywords: 'hemoglobina ferro sangue fraco' },
+                    { id: 'isoimunizacao_g3', name: 'Isoimunização Rh', shortName: 'Isoimunização Rh (G3)', points: 10, keywords: 'rh negativo incompatibilidade sanguínea coombs' },
+                    { id: 'cancer_gestacao', name: 'Câncer na gestação', shortName: 'Câncer na gestação', points: 10, keywords: 'neoplasia tumor oncologia maligno cancer' },
+                    { id: 'ca_mama', name: 'Suspeita Ca Mama ou BIRADS ≥ 3', shortName: 'Suspeita Ca Mama', points: 10, keywords: 'mama câncer nódulo mamografia cancer' },
+                    { id: 'nic', name: 'NIC 2 ou 3', shortName: 'NIC 2/3', points: 10, keywords: 'colo útero lesão hpv displasia utero' },
+                    { id: 'malformacao_fetal', name: 'Malformação ou arritmia fetal', shortName: 'Malformação fetal', points: 10, keywords: 'defeito cardíaco anomalia cromossomo malformacao' },
+                    { id: 'gemelar', name: 'Gemelaridade', shortName: 'Gemelaridade', points: 10, keywords: 'gêmeos múltipla trigêmeos gemeos' },
+                    { id: 'infecciosas', name: 'Doenças infecciosas (Sífilis terciária/falha, HIV, HTLV, TB, Toxo, Rubéola, CMV, Zika, Chikungunya)', shortName: 'Doenças infecciosas', points: 10, keywords: 'infecção vírus bactéria transmissão vertical aids tuberculose sifilis rubeola' },
+                    { id: 'condiloma', name: 'Condiloma acuminado', shortName: 'Condiloma', points: 10, keywords: 'hpv verruga genital' },
+                    { id: 'drogas_alcool', name: 'Drogas/Álcool', shortName: 'Drogas/Álcool', points: 10, keywords: 'substâncias vício dependência crack cocaína alcool' },
+                    { id: 'hiperemese', name: 'Hiperêmese refratária', shortName: 'Hiperêmese', points: 10, keywords: 'vômito enjoo náusea grave hiperemese' }
+                ]
+            },
+            {
+                id: 'grupo4',
+                title: 'Condições Clínicas Prévias',
+                category: 'Grupo 4',
+                icon: 'fa-notes-medical',
+                items: [
+                    { id: 'has', name: 'Hipertensão Arterial', shortName: 'HAS', points: 10, keywords: 'pressão alta crônica hac hipertensao' },
+                    { id: 'dm_tipo', name: 'Diabetes Tipo 1 ou 2', shortName: 'DM Tipo 1/2', points: 10, keywords: 'açúcar glicose insulina glicemia acucar' },
+                    { id: 'tireoide', name: 'Tireoidopatias', shortName: 'Tireoidopatias', points: 10, keywords: 'tireoide hipo hiper tsh t4 tireoide' },
+                    { id: 'psiquiatricas', name: 'Doenças Psiquiátricas graves', shortName: 'Doenças psiquiátricas', points: 10, keywords: 'mental depressão bipolar esquizofrenia ansiedade depressao psiquiatricas' },
+                    { id: 'hematologicas', name: 'Doenças hematológicas / Trombofilias / Histórico de TVP/TEP/AVC', shortName: 'Hematológicas/Trombofilias', points: 10, keywords: 'sangue coagulação trombose embolia derrame anemia falciforme hematologicas' },
+                    { id: 'cardiopatias', name: 'Cardiopatias', shortName: 'Cardiopatias', points: 10, keywords: 'coração valva arritmia insuficiência sopro coracao' },
+                    { id: 'pneumopatias', name: 'Pneumopatias graves (Asma/DPOC)', shortName: 'Pneumopatias', points: 10, keywords: 'pulmão respiratório asma bronquite enfisema pulmao' },
+                    { id: 'autoimunes', name: 'Doenças autoimunes (Lupus/SAF/Hashimoto)', shortName: 'Doenças autoimunes', points: 10, keywords: 'lúpus autoimune síndrome antifosfolípide artrite lupus' },
+                    { id: 'teratogenicos', name: 'Uso de teratogênicos (anticonvulsivantes/lítio)', shortName: 'Uso de teratogênicos', points: 10, keywords: 'medicamento remédio droga epilepsia teratogenicos litio' },
+                    { id: 'drc', name: 'Doença Renal Crônica', shortName: 'DRC', points: 10, keywords: 'rim insuficiência renal diálise creatinina dialise cronica' },
+                    { id: 'bariatrica', name: 'Cirurgia bariátrica < 6 meses', shortName: 'Bariátrica < 6 meses', points: 10, keywords: 'gástrica bypass redução estômago bariatrica gastrica' },
+                    { id: 'epilepsia', name: 'Epilepsia', shortName: 'Epilepsia', points: 10, keywords: 'convulsão crise neurológica convulsao' },
+                    { id: 'genital', name: 'Anormalidades trato genital/Miomas grandes', shortName: 'Anormalidades genitais/Miomas', points: 10, keywords: 'útero mioma malformação uterina utero malformacao' },
+                    { id: 'conizacao', name: 'Conização prévia', shortName: 'Conização prévia', points: 10, keywords: 'colo útero cone cirurgia leep conizacao utero' },
+                    { id: 'hiv_sem_adesao', name: 'HIV sem adesão/CD4 baixo', shortName: 'HIV sem adesão', points: 10, keywords: 'aids vírus imunodeficiência carga viral virus adesao' }
+                ]
             }
-          }
+        ];
+
+        // State
+        let selectedItems = new Map();
+        let currentIMC = null;
+        let manualIMCSelection = null;
+
+        // DOM Elements
+        const mainGrid = document.getElementById('mainGrid');
+        const totalScoreEl = document.getElementById('totalScore');
+        const classificationEl = document.getElementById('classification');
+        const classificationTextEl = document.getElementById('classificationText');
+        const conductTextEl = document.getElementById('conductText');
+        const selectedItemsEl = document.getElementById('selectedItems');
+        const clearBtn = document.getElementById('clearBtn');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchClose = document.getElementById('searchClose');
+
+        // IMC items IDs
+        const imcItemIds = ['imc_baixo', 'imc_sobrepeso', 'imc_obesidade', 'imc_obesidade_g3'];
+
+        // Render all sections
+        function renderSections() {
+            let html = '';
+            
+            criteriaData.forEach((group, groupIndex) => {
+                const hasIMC = group.id === 'grupo1';
+                
+                html += `
+                    <section class="section-card" aria-labelledby="section-title-${group.id}">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fa-solid ${group.icon}" aria-hidden="true"></i>
+                            </div>
+                            <div class="section-title-group">
+                                <div class="section-category">${group.category}</div>
+                                <h2 class="section-title" id="section-title-${group.id}">${group.title}</h2>
+                            </div>
+                        </div>
+                        ${hasIMC ? renderIMCCalculator() : ''}
+                        ${hasIMC ? renderIMCQuickSelect() : ''}
+                        <div class="items-grid" role="group" aria-label="${group.title}">
+                            ${group.items.map(item => renderItem(item, group)).join('')}
+                        </div>
+                    </section>
+                `;
+            });
+            
+            mainGrid.innerHTML = html;
+            attachItemListeners();
+            attachIMCListeners();
+            attachIMCQuickSelectListeners();
+        }
+
+        function renderIMCCalculator() {
+            return `
+                <div class="imc-calculator" id="imcCalculator">
+                    <div class="imc-title">
+                        <i class="fa-solid fa-calculator" aria-hidden="true"></i>
+                        Calculadora de IMC
+                    </div>
+                    <div class="imc-inputs">
+                        <div class="input-group">
+                            <label for="pesoInput">Peso (kg)</label>
+                            <input type="number" id="pesoInput" step="0.1" min="20" max="300" placeholder="Ex: 65.5" aria-describedby="pesoHelp">
+                        </div>
+                        <div class="input-group">
+                            <label for="alturaInput">Altura (m ou cm)</label>
+                            <input type="number" id="alturaInput" step="0.01" min="0.5" max="250" placeholder="Ex: 1.65 ou 165" aria-describedby="alturaHelp">
+                        </div>
+                    </div>
+                    <div class="imc-result" id="imcResult">
+                        <span class="imc-value" id="imcValue">--</span>
+                        <div>
+                            <div class="imc-label">IMC</div>
+                            <div class="imc-category" id="imcCategory">Aguardando dados...</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderIMCQuickSelect() {
+            return `
+                <div class="imc-quick-select" id="imcQuickSelect">
+                    <div class="imc-quick-title">
+                        <i class="fa-solid fa-hand-pointer" aria-hidden="true"></i>
+                        Seleção Rápida de IMC
+                    </div>
+                    <div class="imc-quick-subtitle">Caso o IMC já tenha sido calculado previamente, selecione a faixa correspondente:</div>
+                    <div class="imc-quick-buttons">
+                        <button type="button" class="imc-quick-btn normal-weight" data-imc-range="normal" aria-label="IMC Normal (18 a 24.9) - sem pontuação">
+                            <span>Normal (18-24.9)</span>
+                            <span class="points-badge" style="background: var(--green);">0p</span>
+                        </button>
+                        <button type="button" class="imc-quick-btn" data-imc-range="imc_baixo" aria-label="IMC Baixo peso (menor que 18) - 2 pontos">
+                            <span>Baixo peso (&lt;18)</span>
+                            <span class="points-badge">2p</span>
+                        </button>
+                        <button type="button" class="imc-quick-btn" data-imc-range="imc_sobrepeso" aria-label="IMC Sobrepeso (25 a 29.9) - 1 ponto">
+                            <span>Sobrepeso (25-29.9)</span>
+                            <span class="points-badge">1p</span>
+                        </button>
+                        <button type="button" class="imc-quick-btn" data-imc-range="imc_obesidade" aria-label="IMC Obesidade (30 a 39.9) - 4 pontos">
+                            <span>Obesidade (30-39.9)</span>
+                            <span class="points-badge">4p</span>
+                        </button>
+                        <button type="button" class="imc-quick-btn" data-imc-range="imc_obesidade_g3" aria-label="IMC Obesidade Grau 3 (40 ou mais) - 10 pontos">
+                            <span>Obesidade G3 (≥40)</span>
+                            <span class="points-badge">10p</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderItem(item, group) {
+            const isIMCItem = item.isIMC === true;
+            const disabledClass = isIMCItem ? 'disabled' : '';
+            const disabledAttr = isIMCItem ? 'disabled' : '';
+            
+            return `
+                <label class="item-card ${disabledClass}" 
+                       data-id="${item.id}" 
+                       data-points="${item.points}"
+                       data-keywords="${item.keywords}"
+                       data-group="${group.title}"
+                       data-short-name="${item.shortName}"
+                       data-exclusion="${item.exclusion || ''}"
+                       data-is-imc="${isIMCItem}">
+                    <input type="checkbox" 
+                           name="${item.id}" 
+                           value="${item.points}" 
+                           ${disabledAttr}
+                           aria-label="${item.name} - ${item.points} pontos">
+                    <div class="item-checkbox">
+                        <i class="fa-solid fa-check" aria-hidden="true"></i>
+                    </div>
+                    <div class="item-content">
+                        <div class="item-name">${item.name}</div>
+                    </div>
+                    <span class="item-points">${item.points}p</span>
+                </label>
+            `;
+        }
+
+        function attachItemListeners() {
+            document.querySelectorAll('.item-card:not([data-is-imc="true"])').forEach(card => {
+                card.addEventListener('click', handleItemClick);
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleItemClick.call(card, e);
+                    }
+                });
+            });
+        }
+
+        function handleItemClick(e) {
+            const card = this;
+            const input = card.querySelector('input');
+            const id = card.dataset.id;
+            const points = parseInt(card.dataset.points);
+            const shortName = card.dataset.shortName;
+            const exclusion = card.dataset.exclusion;
+            
+            // Toggle selection
+            if (input.checked) {
+                input.checked = false;
+                card.classList.remove('selected');
+                selectedItems.delete(id);
+            } else {
+                // Handle mutual exclusions
+                if (exclusion) {
+                    const exclusionCard = document.querySelector(`[data-id="${exclusion}"]`);
+                    if (exclusionCard) {
+                        const exclusionInput = exclusionCard.querySelector('input');
+                        exclusionInput.checked = false;
+                        exclusionCard.classList.remove('selected');
+                        selectedItems.delete(exclusion);
+                    }
+                }
+                
+                input.checked = true;
+                card.classList.add('selected');
+                selectedItems.set(id, { 
+                    name: card.querySelector('.item-name').textContent,
+                    shortName: shortName,
+                    points: points 
+                });
+            }
+            
+            updateResults();
+        }
+
+        function attachIMCListeners() {
+            const pesoInput = document.getElementById('pesoInput');
+            const alturaInput = document.getElementById('alturaInput');
+            
+            if (pesoInput && alturaInput) {
+                pesoInput.addEventListener('input', calculateIMC);
+                alturaInput.addEventListener('input', calculateIMC);
+                
+                // Handle comma to dot conversion
+                [pesoInput, alturaInput].forEach(input => {
+                    input.addEventListener('keypress', (e) => {
+                        if (e.key === ',') {
+                            e.preventDefault();
+                            const start = input.selectionStart;
+                            const end = input.selectionEnd;
+                            const value = input.value;
+                            input.value = value.substring(0, start) + '.' + value.substring(end);
+                            input.setSelectionRange(start + 1, start + 1);
+                            calculateIMC();
+                        }
+                    });
+                });
+            }
+        }
+
+        function attachIMCQuickSelectListeners() {
+            document.querySelectorAll('.imc-quick-btn').forEach(btn => {
+                btn.addEventListener('click', handleIMCQuickSelect);
+            });
+        }
+
+        function handleIMCQuickSelect(e) {
+            const btn = e.currentTarget;
+            const range = btn.dataset.imcRange;
+            const imcCalculator = document.getElementById('imcCalculator');
+            
+            // If same button is clicked again, deselect
+            if (btn.classList.contains('selected')) {
+                btn.classList.remove('selected');
+                manualIMCSelection = null;
+                imcCalculator.classList.remove('disabled');
+                
+                // Clear IMC selections
+                clearIMCSelections();
+                updateResults();
+                return;
+            }
+            
+            // Clear all quick select buttons
+            document.querySelectorAll('.imc-quick-btn').forEach(b => b.classList.remove('selected'));
+            
+            // Select clicked button
+            btn.classList.add('selected');
+            manualIMCSelection = range;
+            
+            // Disable the calculator
+            imcCalculator.classList.add('disabled');
+            
+            // Clear calculator inputs
+            const pesoInput = document.getElementById('pesoInput');
+            const alturaInput = document.getElementById('alturaInput');
+            const imcValue = document.getElementById('imcValue');
+            const imcCategory = document.getElementById('imcCategory');
+            const imcResult = document.getElementById('imcResult');
+            
+            if (pesoInput) pesoInput.value = '';
+            if (alturaInput) alturaInput.value = '';
+            if (imcValue) imcValue.textContent = '--';
+            if (imcCategory) imcCategory.textContent = 'Seleção manual ativa';
+            if (imcResult) imcResult.classList.remove('has-value');
+            
+            // Clear previous IMC selections and select new one
+            clearIMCSelections();
+            
+            if (range !== 'normal' && imcItemIds.includes(range)) {
+                selectIMCItem(range);
+            }
+            
+            updateResults();
+        }
+
+        function clearIMCSelections() {
+            imcItemIds.forEach(id => {
+                const card = document.querySelector(`[data-id="${id}"]`);
+                if (card) {
+                    card.classList.remove('selected');
+                    card.classList.add('disabled');
+                    card.querySelector('input').checked = false;
+                    selectedItems.delete(id);
+                }
+            });
+        }
+
+        function selectIMCItem(imcId) {
+            const card = document.querySelector(`[data-id="${imcId}"]`);
+            if (card) {
+                card.classList.add('selected');
+                card.classList.remove('disabled');
+                card.querySelector('input').checked = true;
+                const points = parseInt(card.dataset.points);
+                const shortName = card.dataset.shortName;
+                selectedItems.set(imcId, { 
+                    name: card.querySelector('.item-name').textContent,
+                    shortName: shortName,
+                    points: points 
+                });
+            }
+        }
+
+        function calculateIMC() {
+            // If manual selection is active, don't calculate
+            if (manualIMCSelection) {
+                return;
+            }
+            
+            const pesoInput = document.getElementById('pesoInput');
+            const alturaInput = document.getElementById('alturaInput');
+            const imcValue = document.getElementById('imcValue');
+            const imcCategory = document.getElementById('imcCategory');
+            const imcResult = document.getElementById('imcResult');
+            
+            let peso = parseFloat(pesoInput.value.replace(',', '.'));
+            let altura = parseFloat(alturaInput.value.replace(',', '.'));
+            
+            // Clear previous IMC selections
+            clearIMCSelections();
+            
+            if (!peso || !altura || peso <= 0 || altura <= 0) {
+                imcValue.textContent = '--';
+                imcCategory.textContent = 'Aguardando dados...';
+                imcResult.classList.remove('has-value');
+                currentIMC = null;
+                updateResults();
+                return;
+            }
+            
+            // Convert cm to m if needed
+            if (altura > 3) {
+                altura = altura / 100;
+            }
+            
+            // Validate height
+            if (altura < 0.5 || altura > 2.5) {
+                imcValue.textContent = '--';
+                imcCategory.textContent = 'Altura inválida';
+                imcResult.classList.remove('has-value');
+                currentIMC = null;
+                updateResults();
+                return;
+            }
+            
+            // Calculate IMC
+            const imc = peso / (altura * altura);
+            currentIMC = imc;
+            
+            imcValue.textContent = imc.toFixed(1);
+            imcResult.classList.add('has-value');
+            
+            // Determine category and auto-select
+            let category = '';
+            let selectedIMCId = null;
+            
+            if (imc < 18) {
+                category = 'Baixo peso';
+                selectedIMCId = 'imc_baixo';
+            } else if (imc >= 18 && imc < 25) {
+                category = 'Peso normal';
+                // No selection for normal weight
+            } else if (imc >= 25 && imc < 30) {
+                category = 'Sobrepeso';
+                selectedIMCId = 'imc_sobrepeso';
+            } else if (imc >= 30 && imc < 40) {
+                category = 'Obesidade';
+                selectedIMCId = 'imc_obesidade';
+            } else {
+                category = 'Obesidade Grau 3';
+                selectedIMCId = 'imc_obesidade_g3';
+            }
+            
+            imcCategory.textContent = category;
+            
+            // Auto-select the corresponding IMC item
+            if (selectedIMCId) {
+                selectIMCItem(selectedIMCId);
+            }
+            
+            updateResults();
+        }
+
+        function updateResults() {
+            // Calculate total
+            let total = 0;
+            selectedItems.forEach(item => {
+                total += item.points;
+            });
+            
+            totalScoreEl.textContent = total;
+            
+            // Determine classification
+            let classification, classText, conduct, colorClass;
+            
+            if (total >= 10) {
+                classification = 'high';
+                classText = 'Alto Risco';
+                conduct = 'Encaminhamento ao Pré-Natal de Alto Risco (PNAR) com Cuidado Compartilhado';
+                colorClass = 'high';
+            } else if (total >= 5) {
+                classification = 'medium';
+                classText = 'Risco Intermediário';
+                conduct = 'Acompanhamento na APS com teleconsultoria e apoio especializado';
+                colorClass = 'medium';
+            } else {
+                classification = 'low';
+                classText = 'Risco Habitual';
+                conduct = 'Acompanhamento na Atenção Primária à Saúde (APS)';
+                colorClass = 'low';
+            }
+            
+            classificationEl.className = `results-classification ${colorClass}`;
+            
+            // Update icon
+            let iconClass = 'fa-check-circle';
+            if (classification === 'medium') iconClass = 'fa-exclamation-circle';
+            if (classification === 'high') iconClass = 'fa-times-circle';
+            
+            classificationEl.innerHTML = `
+                <i class="fa-solid ${iconClass}" aria-hidden="true"></i>
+                <span id="classificationText">${classText}</span>
+            `;
+            
+            conductTextEl.textContent = conduct;
+            
+            // Update selected items list with abbreviated names
+            if (selectedItems.size === 0) {
+                selectedItemsEl.innerHTML = '<em>Nenhum critério selecionado</em>';
+            } else {
+                const itemsList = [];
+                selectedItems.forEach((item, id) => {
+                    itemsList.push(`${item.shortName} (${item.points}p)`);
+                });
+                selectedItemsEl.innerHTML = `<strong>Total ${total}p:</strong> ${itemsList.join(' + ')}`;
+            }
+        }
+
+        // Clear all
+        clearBtn.addEventListener('click', () => {
+            selectedItems.clear();
+            currentIMC = null;
+            manualIMCSelection = null;
+            
+            // Reset all checkboxes and cards
+            document.querySelectorAll('.item-card').forEach(card => {
+                card.classList.remove('selected', 'highlight');
+                const input = card.querySelector('input');
+                input.checked = false;
+                
+                // Reset IMC items to disabled
+                if (card.dataset.isImc === 'true') {
+                    card.classList.add('disabled');
+                }
+            });
+            
+            // Reset IMC calculator
+            const imcCalculator = document.getElementById('imcCalculator');
+            if (imcCalculator) imcCalculator.classList.remove('disabled');
+            
+            // Reset IMC inputs
+            const pesoInput = document.getElementById('pesoInput');
+            const alturaInput = document.getElementById('alturaInput');
+            const imcValue = document.getElementById('imcValue');
+            const imcCategory = document.getElementById('imcCategory');
+            const imcResult = document.getElementById('imcResult');
+            
+            if (pesoInput) pesoInput.value = '';
+            if (alturaInput) alturaInput.value = '';
+            if (imcValue) imcValue.textContent = '--';
+            if (imcCategory) imcCategory.textContent = 'Aguardando dados...';
+            if (imcResult) imcResult.classList.remove('has-value');
+            
+            // Reset quick select buttons
+            document.querySelectorAll('.imc-quick-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Reset search
+            searchInput.value = '';
+            closeSearch();
+            
+            updateResults();
         });
 
-        let level = 'BAIXO RISCO';
-        let badgeClass = 'risk-low';
-        let note = 'Atenção Básica com acompanhamento intercalado (enfermeiro e médico).';
-        let conduta = `
-          <ul>
-            <li>Pré-natal na Atenção Básica.</li>
-            <li>Consultas intercaladas entre enfermeiro e médico.</li>
-            <li>Educação em saúde e sinais de alarme.</li>
-          </ul>
-        `;
-
-        if (total >= 10 && has567){
-          level = 'ALTO RISCO';
-          badgeClass = 'risk-high';
-          note = 'Encaminhar para serviço ambulatorial de Alto Risco (PNAR).';
-          conduta = `
-            <ul>
-              <li>Encaminhar ao PNAR/serviço ambulatorial de alto risco.</li>
-              <li>Manter pré-natal compartilhado com a Atenção Básica.</li>
-              <li>Priorizar interconsultas e orientar sinais de alarme.</li>
-              <li>Agendar em menor tempo possível se houver gravidade clínica.</li>
-            </ul>
-          `;
-        } else if (total >= 5 && total <= 9){
-          level = 'MÉDIO RISCO';
-          badgeClass = 'risk-mid';
-          note = 'Pré-natal na Atenção Básica com intercalamento médico/enfermeiro.';
-          conduta = `
-            <ul>
-              <li>Seguir na Atenção Básica com consultas intercaladas (médico/enfermeiro).</li>
-              <li>Reavaliar critérios a cada consulta.</li>
-              <li>Se surgirem critérios de alto risco, encaminhar ao PNAR.</li>
-            </ul>
-          `;
+        // Search functionality
+        function openSearch() {
+            searchOverlay.classList.add('active');
+            searchInput.focus();
+            document.body.style.overflow = 'hidden';
         }
 
-        // Atualiza UI
-        pointsEl.textContent = total;
-        riskBadge.className = 'chip ' + (badgeClass);
-        riskBadge.textContent = level;
-        riskNote.textContent = note;
-
-        const resumo = fatores.length ? fatores.join(' + ') : 'Sem fatores pontuadores selecionados.';
-        relatorioEl.innerHTML = `<strong>Relatório:</strong> ${total} ponto(s): ${resumo}`;
-
-        resultPanel.style.display = 'block';
-        condutaBox.style.display = 'block';
-        condutaText.innerHTML = conduta; // FIX: exibe conduta
-      }
-
-      // Exclusões mútuas (ex.: abortos até 2 vs ≥3)
-      form.addEventListener('change', (ev) => {
-        const t = ev.target;
-        if (!(t instanceof HTMLInputElement)) return;
-
-        const exclSel = t.dataset.excludes;
-        if (exclSel && t.checked){
-          document.querySelectorAll(exclSel).forEach(el => {
-            if (el instanceof HTMLInputElement) el.checked = false;
-          });
-        }
-        compute();
-      });
-
-      // Recalcula em qualquer interação
-      form.querySelectorAll('input').forEach(i => {
-        i.addEventListener('input', compute);
-      });
-
-      // Clear all
-      clearBtn.addEventListener('click', () => {
-        form.reset();
-        document.querySelectorAll('label.option').forEach(l => l.dataset.hit = 'false');
-        inputSearch.value = '';
-        searchStatus.textContent = '';
-        imcBadge.textContent = 'IMC: —';
-        hEl.value = ''; wEl.value = '';
-        document.getElementById('resultado').style.display = 'none';
-        document.getElementById('conduta').style.display = 'none';
-      });
-
-      // Busca: só executa quando pressionar Enter
-      const normalize = (s) => (s || '')
-        .toString()
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g,'')
-        .trim();
-
-      function updateSearch(){
-        const q = normalize(inputSearch.value);
-        let hits = 0;
-        // limpa destaques anteriores
-        searchableLabels.forEach(l => l.dataset.hit = 'false');
-
-        if (q.length < 2){
-          searchStatus.textContent = q.length ? 'Digite pelo menos 2 letras…' : '';
-          return;
+        function closeSearch() {
+            searchOverlay.classList.remove('active');
+            searchInput.value = '';
+            searchResults.innerHTML = '<div class="search-no-results">Digite para buscar critérios...</div>';
+            document.body.style.overflow = '';
         }
 
-        searchableLabels.forEach(l => {
-          const txt = normalize(l.textContent) + ' ' + normalize(l.dataset.keywords || '');
-          const ok = txt.includes(q);
-          l.dataset.hit = ok ? 'true' : 'false';
-          if (ok) hits++;
+        searchBtn.addEventListener('click', openSearch);
+        searchClose.addEventListener('click', closeSearch);
+        
+        searchOverlay.addEventListener('click', (e) => {
+            if (e.target === searchOverlay) {
+                closeSearch();
+            }
         });
 
-        searchStatus.textContent = hits ? `${hits} item(ns) encontrado(s)` : 'Nenhum item encontrado';
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
+            const normalizedQuery = normalizeText(query);
+            
+            if (!query) {
+                searchResults.innerHTML = '<div class="search-no-results">Digite para buscar critérios...</div>';
+                return;
+            }
+            
+            const results = [];
+            
+            criteriaData.forEach(group => {
+                group.items.forEach(item => {
+                    const normalizedName = normalizeText(item.name);
+                    const normalizedKeywords = normalizeText(item.keywords);
+                    
+                    const nameMatch = normalizedName.includes(normalizedQuery);
+                    const keywordMatch = normalizedKeywords.includes(normalizedQuery);
+                    
+                    if (nameMatch || keywordMatch) {
+                        results.push({
+                            id: item.id,
+                            name: item.name,
+                            group: group.title,
+                            points: item.points
+                        });
+                    }
+                });
+            });
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="search-no-results">Nenhum critério encontrado</div>';
+            } else {
+                searchResults.innerHTML = results.map(r => `
+                    <div class="search-result-item" data-id="${r.id}" role="option">
+                        <div>
+                            <div class="search-result-name">${r.name}</div>
+                            <div class="search-result-group">${r.group}</div>
+                        </div>
+                        <span class="item-points">${r.points}p</span>
+                    </div>
+                `).join('');
+                
+                // Attach click handlers
+                searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const id = item.dataset.id;
+                        const card = document.querySelector(`[data-id="${id}"]`);
+                        
+                        if (card) {
+                            closeSearch();
+                            
+                            // Scroll to item
+                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            
+                            // Highlight
+                            card.classList.add('highlight');
+                            setTimeout(() => {
+                                card.classList.remove('highlight');
+                            }, 1500);
+                        }
+                    });
+                });
+            }
+        });
 
-        if (hits){
-          const first = searchableLabels.find(l => l.dataset.hit === 'true');
-          if (first){
-            first.scrollIntoView({behavior:'smooth', block:'center'});
-            const inp = first.querySelector('input');
-            if (inp) inp.focus({preventScroll:true});
-          }
-        }
-      }
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            const activeElement = document.activeElement;
+            const isInputFocused = activeElement.tagName === 'INPUT' && activeElement.type !== 'checkbox';
+            
+            if (e.key === 'Escape' && searchOverlay.classList.contains('active')) {
+                closeSearch();
+                return;
+            }
+            
+            // Ctrl+F to open search (override browser default)
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                openSearch();
+                return;
+            }
+            
+            if (!isInputFocused) {
+                if (e.key === '/' || (e.ctrlKey && e.key === 'k')) {
+                    e.preventDefault();
+                    openSearch();
+                }
+            }
+        });
 
-      // Enter para buscar (sem interromper digitação)
-      inputSearch.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter'){
-          e.preventDefault();
-          updateSearch();
-        }
-      });
-
-      clearSearchBtn.addEventListener('click', () => {
-        inputSearch.value = '';
-        searchableLabels.forEach(l => l.dataset.hit = 'false');
-        searchStatus.textContent = '';
-        // mantém o painel aberto sem scroll
-      });
-
-      // IMC
-      function parseNum(v){
-        if (!v) return NaN;
-        return Number(v.replace(',', '.'));
-      }
-      function imcToCategory(imc){
-        if (!isFinite(imc)) return null;
-        if (imc < 18.5) return "baixo";
-        if (imc < 25) return "adequado";
-        if (imc < 30) return "sobrepeso";
-        return "obesidade";
-      }
-      function selectIMC(cat){
-        if (!cat) return;
-        const radio = form.querySelector(`input[name="imc"][value="${cat}"]`);
-        if (radio){ radio.checked = true; }
-      }
-      function updateIMC(){
-        const h = parseNum(hEl.value);
-        const w = parseNum(wEl.value);
-        if (!h || !w || h <= 0) { imcBadge.textContent = 'IMC: —'; return; }
-        const imc = w / (h*h);
-        const cat = imcToCategory(imc);
-        imcBadge.textContent = `IMC: ${imc.toFixed(1)} (${cat || '—'})`;
-        selectIMC(cat);
-        compute();
-      }
-      calcIMCBtn.addEventListener('click', updateIMC);
-      hEl.addEventListener('change', updateIMC);
-      wEl.addEventListener('change', updateIMC);
-    })();
-  </script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSections();
+            updateResults();
+        });
+    </script>
 </body>
 </html>
