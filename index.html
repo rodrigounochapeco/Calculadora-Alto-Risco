@@ -1,1869 +1,2787 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="system">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Calculadora de Risco Gestacional</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        :root {
-            --primary: #ff6392;
-            --primary-hover: #ff4a7c;
-            --bg: #f5f5f7;
-            --surface: #ffffff;
-            --surface-hover: #f8f8fa;
-            --text: #1d1d1f;
-            --text-secondary: #6e6e73;
-            --border: #e5e5e7;
-            --shadow: 0 2px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
-            --radius: 16px;
-            --radius-sm: 12px;
-            --green: #34c759;
-            --yellow: #ff9500;
-            --red: #ff3b30;
-            --highlight: rgba(255, 99, 146, 0.2);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --primary: #701B7B;
-                --primary-hover: #8a2291;
-                --bg: #121212;
-                --surface: #1e1e1e;
-                --surface-hover: #2a2a2a;
-                --text: #f5f5f7;
-                --text-secondary: #a1a1a6;
-                --border: #3a3a3c;
-                --shadow: 0 2px 12px rgba(0,0,0,0.3);
-                --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
-                --highlight: rgba(112, 27, 123, 0.3);
-            }
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            html {
-                scroll-behavior: auto;
-            }
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        body {
-            font-family: 'Onest', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 24px 16px;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 32px;
-            padding: 32px 24px;
-            background: var(--surface);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-        }
-
-        .header-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 16px;
-        }
-
-        .header h1 {
-            font-size: clamp(1.5rem, 4vw, 2.25rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            margin-bottom: 8px;
-        }
-
-        .header > p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            max-width: 600px;
-            margin: 0 auto 20px auto;
-        }
-
-        .header-guidelines {
-            background: var(--surface-hover);
-            border-radius: var(--radius-sm);
-            padding: 16px 20px;
-            margin-top: 16px;
-            text-align: left;
-            border-left: 4px solid var(--primary);
-        }
-
-        .header-guidelines-title {
-            font-size: 0.95rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: white;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--primary);
-            padding: 12px 18px;
-            border-radius: 10px;
-            width: fit-content;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .header-guidelines ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .header-guidelines li {
-            font-size: 0.85rem;
-            color: var(--text);
-            padding: 6px 0;
-            padding-left: 20px;
-            position: relative;
-            line-height: 1.5;
-        }
-
-        .header-guidelines li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 12px;
-            width: 8px;
-            height: 8px;
-            background: var(--primary);
-            border-radius: 50%;
-        }
-
-        .header-protocol-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 12px;
-            padding: 10px 16px;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-
-        .header-protocol-link:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        /* Bento Grid */
-        .bento-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-
-        @media (min-width: 768px) {
-            .bento-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .bento-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        /* Section Cards */
-        .section-card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 24px;
-            grid-column: 1 / -1;
-        }
-
-        .section-card.half {
-            grid-column: span 1;
-        }
-
-        @media (min-width: 768px) {
-            .section-card.half {
-                grid-column: span 1;
-            }
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .section-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--primary);
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-        }
-
-        .section-title-group {
-            flex: 1;
-        }
-
-        .section-category {
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: var(--text-secondary);
-            opacity: 0.8;
-            margin-bottom: 4px;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-
-        /* Items Grid */
-        .items-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-
-        @media (min-width: 480px) {
-            .items-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .items-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        /* Checkbox/Radio Card Items */
-        .item-card {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            background: var(--surface-hover);
-            border: 2px solid var(--border);
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-        }
-
-        .item-card:hover {
-            border-color: var(--primary);
-            background: var(--surface);
-        }
-
-        .item-card:focus-within {
-            outline: 3px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        .item-card.selected {
-            border-color: var(--primary);
-            background: var(--highlight);
-        }
-
-        .item-card.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .item-card.highlight {
-            animation: highlightPulse 1.5s ease-out;
-        }
-
-        @keyframes highlightPulse {
-            0% { box-shadow: 0 0 0 0 var(--primary); }
-            50% { box-shadow: 0 0 0 8px transparent; }
-            100% { box-shadow: 0 0 0 0 transparent; }
-        }
-
-        .item-card input {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .item-checkbox {
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--border);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-            background: var(--surface);
-        }
-
-        .item-card.selected .item-checkbox {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-
-        .item-checkbox i {
-            font-size: 0.75rem;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.2s ease;
-        }
-
-        .item-card.selected .item-checkbox i {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .item-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .item-name {
-            font-size: 0.9rem;
-            font-weight: 500;
-            line-height: 1.4;
-            word-wrap: break-word;
-        }
-
-        .item-points {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: white;
-            background: var(--primary);
-            padding: 4px 12px;
-            border-radius: 20px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            min-width: 42px;
-            text-align: center;
-        }
-
-        /* IMC Calculator */
-        .imc-calculator {
-            background: var(--surface-hover);
-            border-radius: var(--radius-sm);
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 2px solid var(--border);
-        }
-
-        .imc-calculator.disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .imc-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .imc-inputs {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-
-        .input-group {
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 2px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-family: inherit;
-            font-size: 1rem;
-            background: var(--surface);
-            color: var(--text);
-            transition: border-color 0.2s ease;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .imc-result {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            background: var(--surface);
-            border-radius: var(--radius-sm);
-            border: 2px solid var(--border);
-        }
-
-        .imc-result.has-value {
-            border-color: var(--primary);
-        }
-
-        .imc-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .imc-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .imc-category {
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        /* IMC Quick Select */
-        .imc-quick-select {
-            background: var(--surface-hover);
-            border-radius: var(--radius-sm);
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 2px solid var(--border);
-        }
-
-        .imc-quick-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .imc-quick-subtitle {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-        }
-
-        .imc-quick-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .imc-quick-btn {
-            flex: 1;
-            min-width: 140px;
-            padding: 12px 16px;
-            border: 2px solid var(--border);
-            border-radius: var(--radius-sm);
-            background: var(--surface);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .imc-quick-btn:hover {
-            border-color: var(--primary);
-            background: var(--surface-hover);
-        }
-
-        .imc-quick-btn.selected {
-            border-color: var(--primary);
-            background: var(--highlight);
-        }
-
-        .imc-quick-btn:focus {
-            outline: 3px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        .imc-quick-btn .points-badge {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: white;
-            background: var(--primary);
-            padding: 2px 10px;
-            border-radius: 12px;
-        }
-
-        .imc-quick-btn.normal-weight {
-            background: rgba(52, 199, 89, 0.1);
-            border-color: var(--green);
-        }
-
-        .imc-quick-btn.normal-weight:hover {
-            background: rgba(52, 199, 89, 0.2);
-        }
-
-        /* Results Section - Compact */
-        .results-section {
-            position: sticky;
-            bottom: 16px;
-            z-index: 100;
-            margin-top: 24px;
-        }
-
-        .results-card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            padding: 16px 20px;
-            border: 2px solid var(--border);
-            position: relative;
-        }
-
-        .results-main {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .results-score {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-        }
-
-        .score-value {
-            font-size: 2.5rem;
-            font-weight: 900;
-            line-height: 1;
-        }
-
-        .score-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .results-classification {
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .results-classification.low {
-            background: rgba(52, 199, 89, 0.15);
-            color: var(--green);
-            border: 2px solid var(--green);
-        }
-
-        .results-classification.medium {
-            background: rgba(255, 149, 0, 0.15);
-            color: var(--yellow);
-            border: 2px solid var(--yellow);
-        }
-
-        .results-classification.high {
-            background: rgba(255, 59, 48, 0.15);
-            color: var(--red);
-            border: 2px solid var(--red);
-        }
-
-        .results-conduct {
-            flex: 1;
-            min-width: 200px;
-            padding: 10px 14px;
-            background: var(--surface-hover);
-            border-radius: var(--radius-sm);
-        }
-
-        .conduct-title {
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-secondary);
-            margin-bottom: 2px;
-        }
-
-        .conduct-text {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .results-details {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 12px;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
-            padding-right: 60px;
-        }
-
-        .results-items {
-            flex: 1;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-            max-height: 60px;
-            overflow-y: auto;
-            padding-right: 8px;
-        }
-
-        .results-items::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .results-items::-webkit-scrollbar-track {
-            background: var(--border);
-            border-radius: 2px;
-        }
-
-        .results-items::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 2px;
-        }
-
-        .results-actions {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        .btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-family: inherit;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn:focus {
-            outline: 3px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-        }
-
-        .btn-secondary {
-            background: var(--surface-hover);
-            color: var(--text);
-            border: 2px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--primary);
-        }
-
-        /* Search Button - Bottom Right Corner of Results Card */
-        .search-btn {
-            position: absolute;
-            bottom: 16px;
-            right: 16px;
-            width: 44px;
-            height: 44px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow);
-        }
-
-        .search-btn:hover {
-            background: var(--primary-hover);
-            transform: scale(1.05);
-        }
-
-        .search-btn:focus {
-            outline: 3px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        /* Search Modal */
-        .search-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 80px 16px;
-        }
-
-        .search-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .search-modal {
-            background: var(--surface);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            width: 100%;
-            max-width: 600px;
-            transform: translateY(-20px);
-            transition: transform 0.2s ease;
-        }
-
-        .search-overlay.active .search-modal {
-            transform: translateY(0);
-        }
-
-        .search-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .search-header i {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
-
-        .search-input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: 1.1rem;
-            color: var(--text);
-            outline: none;
-        }
-
-        .search-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .search-close {
-            background: var(--surface-hover);
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .search-close:hover {
-            background: var(--border);
-        }
-
-        .search-results {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 8px;
-        }
-
-        .search-result-item {
-            padding: 12px 16px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: background 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .search-result-item:hover {
-            background: var(--surface-hover);
-        }
-
-        .search-result-name {
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-
-        .search-result-group {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .search-no-results {
-            padding: 24px;
-            text-align: center;
-            color: var(--text-secondary);
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 32px 16px;
-            margin-top: 32px;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            line-height: 1.6;
-        }
-
-        .footer-disclaimer {
-            max-width: 700px;
-            margin: 0 auto 24px auto;
-            padding: 16px;
-            background: var(--surface);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-        }
-
-        .footer-disclaimer i {
-            color: var(--yellow);
-            margin-right: 6px;
-        }
-
-        .footer-reference {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 14px 18px;
-            background: var(--surface);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-            text-align: left;
-        }
-
-        .footer-reference-title {
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--primary);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .footer-reference-content {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .footer-reference-content strong {
-            color: var(--text);
-        }
-
-        /* Print Styles */
-        @media print {
-            body {
-                background: white;
-                color: black;
-                font-size: 12pt;
-            }
-
-            .search-btn, .search-overlay, .btn, .results-actions {
-                display: none !important;
-            }
-
-            .container {
-                max-width: 100%;
-                padding: 0;
-            }
-
-            .header, .section-card, .results-card, .footer-reference {
-                box-shadow: none;
-                border: 1px solid #ccc;
-                break-inside: avoid;
-            }
-
-            .results-section {
-                position: static;
-            }
-
-            .item-card:not(.selected) {
-                display: none;
-            }
-
-            .item-card.selected {
-                border: 1px solid #333;
-                background: #f5f5f5;
-            }
-
-            .items-grid {
-                display: block;
-            }
-
-            .item-card {
-                margin-bottom: 8px;
-            }
-
-            .imc-calculator, .imc-quick-select {
-                border: 1px solid #ccc;
-            }
-
-            .print-header {
-                display: block !important;
-                text-align: center;
-                margin-bottom: 20px;
-                padding-bottom: 10px;
-                border-bottom: 2px solid #333;
-            }
-
-            .print-date {
-                font-size: 10pt;
-                color: #666;
-            }
-
-            .header-guidelines, .header-protocol-link {
-                display: none;
-            }
-        }
-
-        .print-header {
-            display: none;
-        }
-
-        /* Keyboard shortcuts hint */
-        .kbd {
-            display: inline-block;
-            padding: 2px 6px;
-            font-size: 0.7rem;
-            font-family: monospace;
-            background: var(--surface-hover);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            color: var(--text-secondary);
-        }
-
-        /* Responsive adjustments for compact results */
-        @media (max-width: 600px) {
-            .results-main {
-                flex-direction: column;
-                align-items: flex-start;
-                padding-right: 60px;
-            }
-            
-            .results-conduct {
-                width: 100%;
-            }
-            
-            .results-details {
-                flex-direction: column;
-                align-items: flex-start;
-                padding-right: 0;
-            }
-            
-            .results-actions {
-                width: 100%;
-                justify-content: stretch;
-                margin-top: 8px;
-            }
-            
-            .results-actions .btn {
-                flex: 1;
-                justify-content: center;
-            }
-            
-            .search-btn {
-                bottom: auto;
-                top: 16px;
-                right: 16px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Risco Gestacional | Protocolo SES/SC 2025</title>
+  <meta name="description" content="Estratificação de risco obstétrico e condutas clínicas segundo o Instrumento de Estratificação de Risco Gestacional da SES/SC (3ª edição, 2025).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & CSS TOKENS (CLEAN CLINICAL / APPLE HEALTH)
+       ========================================================================== */
+    :root {
+      /* Base Palettes - Light Mode */
+      --font-sans: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #ffffff;
+      --bg-surface-subtle: #f1f5f9;
+      --bg-surface-hover: #e2e8f0;
+      
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --text-inverse: #ffffff;
+
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --border-focus: #e11d48;
+
+      /* Primary Accent (Obstetric Rose/Magenta Acetinado) */
+      --primary: #e11d48;
+      --primary-hover: #be185d;
+      --primary-subtle: rgba(225, 29, 72, 0.08);
+      --primary-border: rgba(225, 29, 72, 0.25);
+      --primary-glow: rgba(225, 29, 72, 0.15);
+
+      /* Clinical Triage Semaphoric Tokens */
+      --risk-low: #059669;
+      --risk-low-bg: #ecfdf5;
+      --risk-low-border: #a7f3d0;
+      --risk-low-text: #065f46;
+
+      --risk-medium: #d97706;
+      --risk-medium-bg: #fffbeb;
+      --risk-medium-border: #fde68a;
+      --risk-medium-text: #92400e;
+
+      --risk-high: #dc2626;
+      --risk-high-bg: #fef2f2;
+      --risk-high-border: #fecaca;
+      --risk-high-text: #991b1b;
+
+      /* Radii & Depth */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+      --shadow-dock: 0 -4px 20px -2px rgba(15, 23, 42, 0.08), 0 -2px 6px -1px rgba(15, 23, 42, 0.04);
+
+      --ease-tactile: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Dark Mode Theme */
+    [data-theme="dark"],
+    [data-theme="system"] {
+      @media (prefers-color-scheme: dark) {
+        --bg-page: #0b0f19;
+        --bg-surface: #131c2e;
+        --bg-surface-elevated: #1a2438;
+        --bg-surface-subtle: #1e293b;
+        --bg-surface-hover: #29354d;
+
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --text-inverse: #0b0f19;
+
+        --border-subtle: #1e293b;
+        --border-strong: #334155;
+        --border-focus: #fb7185;
+
+        --primary: #f43f5e;
+        --primary-hover: #fb7185;
+        --primary-subtle: rgba(244, 63, 94, 0.15);
+        --primary-border: rgba(244, 63, 94, 0.35);
+        --primary-glow: rgba(244, 63, 94, 0.25);
+
+        --risk-low: #10b981;
+        --risk-low-bg: rgba(16, 185, 129, 0.12);
+        --risk-low-border: rgba(16, 185, 129, 0.3);
+        --risk-low-text: #34d399;
+
+        --risk-medium: #f59e0b;
+        --risk-medium-bg: rgba(245, 158, 11, 0.12);
+        --risk-medium-border: rgba(245, 158, 11, 0.3);
+        --risk-medium-text: #fbbf24;
+
+        --risk-high: #ef4444;
+        --risk-high-bg: rgba(239, 68, 68, 0.14);
+        --risk-high-border: rgba(239, 68, 68, 0.35);
+        --risk-high-text: #f87171;
+
+        --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 0 10px 20px -3px rgba(0, 0, 0, 0.5);
+        --shadow-dock: 0 -4px 25px -2px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0b0f19;
+      --bg-surface: #131c2e;
+      --bg-surface-elevated: #1a2438;
+      --bg-surface-subtle: #1e293b;
+      --bg-surface-hover: #29354d;
+
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-inverse: #0b0f19;
+
+      --border-subtle: #1e293b;
+      --border-strong: #334155;
+      --border-focus: #fb7185;
+
+      --primary: #f43f5e;
+      --primary-hover: #fb7185;
+      --primary-subtle: rgba(244, 63, 94, 0.15);
+      --primary-border: rgba(244, 63, 94, 0.35);
+      --primary-glow: rgba(244, 63, 94, 0.25);
+
+      --risk-low: #10b981;
+      --risk-low-bg: rgba(16, 185, 129, 0.12);
+      --risk-low-border: rgba(16, 185, 129, 0.3);
+      --risk-low-text: #34d399;
+
+      --risk-medium: #f59e0b;
+      --risk-medium-bg: rgba(245, 158, 11, 0.12);
+      --risk-medium-border: rgba(245, 158, 11, 0.3);
+      --risk-medium-text: #fbbf24;
+
+      --risk-high: #ef4444;
+      --risk-high-bg: rgba(239, 68, 68, 0.14);
+      --risk-high-border: rgba(239, 68, 68, 0.35);
+      --risk-high-text: #f87171;
+
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 20px -3px rgba(0, 0, 0, 0.5);
+      --shadow-dock: 0 -4px 25px -2px rgba(0, 0, 0, 0.6);
+    }
+
+    [data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #ffffff;
+      --bg-surface-subtle: #f1f5f9;
+      --bg-surface-hover: #e2e8f0;
+      
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --text-inverse: #ffffff;
+
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --border-focus: #e11d48;
+
+      --primary: #e11d48;
+      --primary-hover: #be185d;
+      --primary-subtle: rgba(225, 29, 72, 0.08);
+      --primary-border: rgba(225, 29, 72, 0.25);
+      --primary-glow: rgba(225, 29, 72, 0.15);
+
+      --risk-low: #059669;
+      --risk-low-bg: #ecfdf5;
+      --risk-low-border: #a7f3d0;
+      --risk-low-text: #065f46;
+
+      --risk-medium: #d97706;
+      --risk-medium-bg: #fffbeb;
+      --risk-medium-border: #fde68a;
+      --risk-medium-text: #92400e;
+
+      --risk-high: #dc2626;
+      --risk-high-bg: #fef2f2;
+      --risk-high-border: #fecaca;
+      --risk-high-text: #991b1b;
+    }
+
+    /* Base Reset & Typography */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      caret-color: var(--primary);
+      transition: background-color 0.25s var(--ease-smooth), color 0.25s var(--ease-smooth);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection {
+      background-color: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-page);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: var(--radius-full);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+
+    /* Focus styling */
+    :focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    /* Tabular figures for clinical numbers */
+    .num-tabular {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ==========================================================================
+       CONTAINER & HEADER
+       ========================================================================== */
+    .app-container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 20px 140px 20px;
+      flex: 1;
+    }
+
+    .top-header {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 24px 28px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .header-main-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .header-identity {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-lg);
+      background: var(--primary-subtle);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid var(--primary-border);
+    }
+
+    .header-icon-box svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .header-titles h1 {
+      font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .header-titles p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-top: 3px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Action Buttons */
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 38px;
+      padding: 0 14px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--text-secondary);
+      background: var(--bg-surface-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.18s var(--ease-tactile), background 0.15s var(--ease-smooth), color 0.15s var(--ease-smooth), border-color 0.15s var(--ease-smooth);
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .action-btn:hover {
+      background: var(--bg-surface-hover);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .action-btn:active {
+      transform: scale(0.96) translateY(0);
+    }
+
+    .action-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .action-btn kbd {
+      font-family: inherit;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border-strong);
+      margin-left: 2px;
+    }
+
+    /* Header Collapsible Guidelines */
+    .guidelines-toggle {
+      margin-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 14px;
+    }
+
+    .guidelines-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      user-select: none;
+      padding: 4px 0;
+    }
+
+    .guidelines-summary:hover {
+      color: var(--primary);
+    }
+
+    .guidelines-summary-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .guidelines-summary-icon {
+      transition: transform 0.2s var(--ease-smooth);
+    }
+
+    details[open] .guidelines-summary-icon {
+      transform: rotate(180deg);
+    }
+
+    .guidelines-content {
+      margin-top: 12px;
+      padding: 14px 18px;
+      background: var(--bg-surface-subtle);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .guidelines-content {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .guideline-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      line-height: 1.45;
+    }
+
+    .guideline-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--primary);
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       GROUPS LAYOUT & BENTO GRID
+       ========================================================================== */
+    .groups-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .group-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s var(--ease-smooth);
+    }
+
+    .group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      gap: 12px;
+    }
+
+    .group-title-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .group-badge-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-subtle);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .group-badge-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .group-title-text h2 {
+      font-size: 1.0625rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .group-title-text span {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .group-status-chip {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface-subtle);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+
+    .group-status-chip.has-selections {
+      color: var(--primary);
+      background: var(--primary-subtle);
+      border-color: var(--primary-border);
+    }
+
+    /* ==========================================================================
+       IMC MODULAR WIDGET
+       ========================================================================== */
+    .imc-widget {
+      background: var(--bg-surface-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      margin-bottom: 20px;
+    }
+
+    .imc-widget-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .imc-widget-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .imc-widget-title svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary);
+    }
+
+    /* Mode Tabs */
+    .imc-tabs {
+      display: flex;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .imc-tab-btn {
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.18s var(--ease-tactile);
+    }
+
+    .imc-tab-btn:active {
+      transform: scale(0.96);
+    }
+
+    .imc-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Calculator Inputs Panel */
+    .imc-calc-view {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      animation: imcViewFade 0.22s var(--ease-tactile);
+    }
+
+    @keyframes imcViewFade {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (min-width: 640px) {
+      .imc-calc-view {
+        grid-template-columns: 1fr 1fr 1.3fr;
+      }
+    }
+
+    .input-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-field-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .input-with-affix {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-with-affix input {
+      width: 100%;
+      height: 42px;
+      padding: 0 42px 0 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: border-color 0.15s var(--ease-smooth);
+    }
+
+    .input-with-affix input:focus {
+      border-color: var(--border-focus);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .input-affix-label {
+      position: absolute;
+      right: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      pointer-events: none;
+      text-transform: uppercase;
+    }
+
+    /* IMC Computed Result Card */
+    .imc-computed-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.2s var(--ease-smooth);
+    }
+
+    .imc-computed-card.is-active {
+      border-color: var(--primary-border);
+      background: var(--primary-subtle);
+    }
+
+    .imc-score-display {
+      font-size: 1.625rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+      min-width: 55px;
+    }
+
+    .imc-label-stack {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .imc-label-stack .imc-status-title {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .imc-label-stack .imc-status-sub {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+
+    /* IMC Visual Gauge Bar */
+    .imc-gauge-track {
+      width: 100%;
+      height: 6px;
+      background: var(--border-strong);
+      border-radius: var(--radius-full);
+      margin-top: 14px;
+      position: relative;
+      overflow: visible;
+      display: grid;
+      grid-template-columns: 18% 30% 25% 27%;
+      gap: 2px;
+    }
+
+    .gauge-seg {
+      height: 100%;
+      border-radius: 2px;
+    }
+    .gauge-seg.seg-under { background: #38bdf8; }
+    .gauge-seg.seg-normal { background: #10b981; }
+    .gauge-seg.seg-over { background: #f59e0b; }
+    .gauge-seg.seg-obese { background: #ef4444; }
+
+    .gauge-marker {
+      position: absolute;
+      top: -4px;
+      width: 14px;
+      height: 14px;
+      border-radius: var(--radius-full);
+      background: var(--primary);
+      border: 2px solid #ffffff;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.35);
+      transform: translateX(-50%);
+      transition: left 0.35s var(--ease-tactile), opacity 0.2s ease, transform 0.2s var(--ease-tactile);
+      opacity: 0;
+    }
+    .gauge-marker.visible {
+      opacity: 1;
+    }
+
+    /* Quick Selector Buttons Grid */
+    .imc-quick-grid {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .imc-quick-grid.active {
+      display: grid;
+      animation: imcViewFade 0.22s var(--ease-tactile);
+    }
+
+    .quick-imc-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 12px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: transform 0.18s var(--ease-tactile), border-color 0.15s var(--ease-smooth), background 0.15s var(--ease-smooth), box-shadow 0.15s var(--ease-smooth);
+      position: relative;
+    }
+
+    .quick-imc-btn:hover {
+      border-color: var(--primary);
+      background: var(--bg-surface-elevated);
+      transform: translateY(-1.5px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quick-imc-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .quick-imc-btn.selected {
+      background: var(--primary-subtle);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary);
+      animation: quickSelectPop 0.22s var(--ease-tactile);
+    }
+
+    @keyframes quickSelectPop {
+      0% { transform: scale(0.96); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    .quick-imc-btn .q-title {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .quick-imc-btn .q-range {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .quick-imc-btn .q-points {
+      margin-top: 8px;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface-subtle);
+      color: var(--text-secondary);
+      transition: background 0.15s var(--ease-smooth), color 0.15s var(--ease-smooth);
+    }
+
+    .quick-imc-btn.selected .q-points {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .quick-imc-btn.normal-weight {
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+    .quick-imc-btn.normal-weight.selected {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: var(--risk-low);
+    }
+    .quick-imc-btn.normal-weight.selected .q-points {
+      background: var(--risk-low);
+      color: #ffffff;
+    }
+
+    /* ==========================================================================
+       CRITERIA CARDS GRID & CARDS
+       ========================================================================== */
+    .criteria-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .criteria-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1080px) {
+      .criteria-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .criterion-card {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-surface-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.18s var(--ease-tactile), background-color 0.15s var(--ease-smooth), border-color 0.15s var(--ease-smooth), box-shadow 0.15s var(--ease-smooth);
+    }
+
+    .criterion-card:hover {
+      background: var(--bg-surface);
+      border-color: var(--border-strong);
+      transform: translateY(-1.5px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .criterion-card:active {
+      transform: scale(0.988) translateY(0);
+    }
+
+    .criterion-card.is-selected {
+      background: var(--primary-subtle);
+      border-color: var(--primary-border);
+      box-shadow: 0 0 0 1px var(--primary-border);
+    }
+
+    /* Search Highlight Animation */
+    @keyframes pulseSearch {
+      0% { box-shadow: 0 0 0 0 var(--primary); }
+      50% { box-shadow: 0 0 0 6px var(--primary-glow); border-color: var(--primary); }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+
+    .criterion-card.search-highlight {
+      animation: pulseSearch 1.8s ease-out;
+    }
+
+    /* Native Checkbox replacement */
+    .criterion-card input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    .custom-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border-strong);
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: all 0.18s var(--ease-tactile);
+    }
+
+    .criterion-card:hover .custom-checkbox {
+      border-color: var(--primary);
+      transform: scale(1.04);
+    }
+
+    .criterion-card.is-selected .custom-checkbox {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      animation: checkPop 0.22s var(--ease-tactile);
+    }
+
+    @keyframes checkPop {
+      0% { transform: scale(0.85); }
+      50% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    .custom-checkbox svg {
+      width: 14px;
+      height: 14px;
+      stroke-width: 2.8;
+      stroke-dasharray: 24;
+      stroke-dashoffset: 24;
+      transform: scale(0.6);
+      transition: stroke-dashoffset 0.22s var(--ease-tactile), transform 0.22s var(--ease-tactile);
+    }
+
+    .criterion-card.is-selected .custom-checkbox svg {
+      stroke-dashoffset: 0;
+      transform: scale(1);
+    }
+
+    .card-content-area {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 0.84375rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--text-primary);
+      word-break: break-word;
+    }
+
+    .points-badge {
+      font-size: 0.71875rem;
+      font-weight: 700;
+      line-height: 1;
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-strong);
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+      align-self: flex-start;
+      transition: all 0.15s var(--ease-smooth);
+    }
+
+    .criterion-card.is-selected .points-badge {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .points-badge.heavy-points {
+      border-color: rgba(225, 29, 72, 0.4);
+    }
+
+    /* ==========================================================================
+       FLOATING CLINICAL DOCK (RESULTS BAR)
+       ========================================================================== */
+    .clinical-dock-wrapper {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0 16px;
+      pointer-events: none;
+    }
+
+    .clinical-dock {
+      max-width: 1100px;
+      margin: 0 auto;
+      pointer-events: auto;
+      background: var(--bg-surface);
+      background: color-mix(in srgb, var(--bg-surface) 90%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-dock);
+      padding: 16px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.25s var(--ease-tactile);
+    }
+
+    .dock-main-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .dock-score-cluster {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .dock-score-circle {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .dock-score-num {
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+      transition: color 0.2s var(--ease-smooth);
+    }
+
+    .dock-score-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Triage Classification Badge */
+    .dock-triage-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+      transition: background 0.25s var(--ease-smooth), color 0.25s var(--ease-smooth), border-color 0.25s var(--ease-smooth), transform 0.25s var(--ease-tactile);
+    }
+
+    @keyframes triageBadgePulse {
+      0% { transform: scale(0.92); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .dock-triage-badge.tier-change {
+      animation: triageBadgePulse 0.3s var(--ease-tactile);
+    }
+
+    .dock-triage-badge svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .dock-triage-badge.low {
+      background: var(--risk-low-bg);
+      color: var(--risk-low-text);
+      border-color: var(--risk-low-border);
+    }
+
+    .dock-triage-badge.medium {
+      background: var(--risk-medium-bg);
+      color: var(--risk-medium-text);
+      border-color: var(--risk-medium-border);
+    }
+
+    .dock-triage-badge.high {
+      background: var(--risk-high-bg);
+      color: var(--risk-high-text);
+      border-color: var(--risk-high-border);
+    }
+
+    .dock-conduct-block {
+      flex: 1;
+      min-width: 240px;
+      line-height: 1.35;
+    }
+
+    .conduct-meta-title {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .conduct-description {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .dock-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    /* Chips Row for Active Criteria */
+    .dock-tags-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-subtle);
+      scrollbar-width: none;
+    }
+
+    .dock-tags-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .dock-tag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface-subtle);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.71875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      transition: border-color 0.15s var(--ease-smooth), color 0.15s var(--ease-smooth), transform 0.15s var(--ease-smooth);
+      animation: chipIn 0.22s var(--ease-tactile);
+    }
+
+    @keyframes chipIn {
+      from { opacity: 0; transform: scale(0.82) translateY(4px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .dock-tag-chip:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    .dock-tag-remove {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      font-size: 0.875rem;
+      line-height: 1;
+      transition: color 0.15s var(--ease-smooth), transform 0.18s var(--ease-tactile);
+    }
+
+    .dock-tag-remove:hover {
+      color: var(--primary);
+      transform: scale(1.22) rotate(90deg);
+    }
+
+    .dock-empty-msg {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ==========================================================================
+       COMMAND PALETTE / FUZZY SEARCH MODAL
+       ========================================================================== */
+    .search-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 15, 25, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 80px 16px 20px 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s var(--ease-smooth);
+    }
+
+    .search-backdrop.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .search-container {
+      width: 100%;
+      max-width: 640px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-16px) scale(0.98);
+      transition: transform 0.2s var(--ease-tactile);
+      overflow: hidden;
+    }
+
+    .search-backdrop.is-open .search-container {
+      transform: translateY(0) scale(1);
+    }
+
+    .search-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .search-input-wrapper svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .search-input-box {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .search-input-box::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-close-badge {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--bg-surface-subtle);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .search-results-list {
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .search-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background 0.15s var(--ease-smooth);
+    }
+
+    .search-item:hover,
+    .search-item.highlighted {
+      background: var(--bg-surface-subtle);
+    }
+
+    .search-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .search-item-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .search-item-group {
+      font-size: 0.71875rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .search-no-results {
+      padding: 36px 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    /* ==========================================================================
+       FOOTER & REFERENCES
+       ========================================================================== */
+    .app-footer {
+      max-width: 860px;
+      margin: 40px auto 0 auto;
+      text-align: center;
+      font-size: 0.78125rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .footer-disclaimer-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .footer-disclaimer-box svg {
+      width: 18px;
+      height: 18px;
+      color: var(--risk-medium);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .footer-ref-text {
+      font-size: 0.75rem;
+    }
+
+    .footer-ref-text strong {
+      color: var(--text-secondary);
+    }
+
+    /* ==========================================================================
+       ACCESSIBILITY: REDUCED MOTION
+       ========================================================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .dock-score-num {
+        transition: none !important;
+      }
+    }
+
+    /* ==========================================================================
+       PRINT STYLES
+       ========================================================================== */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11pt;
+      }
+
+      .clinical-dock-wrapper,
+      .search-backdrop,
+      .header-actions,
+      .guidelines-toggle,
+      .imc-widget-top .imc-tabs,
+      .app-footer {
+        display: none !important;
+      }
+
+      .app-container {
+        padding: 0;
+        max-width: 100%;
+      }
+
+      .top-header,
+      .group-section {
+        box-shadow: none !important;
+        border: 1px solid #d1d5db !important;
+        margin-bottom: 16px;
+        break-inside: avoid;
+      }
+
+      .print-report-header {
+        display: block !important;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #000000;
+        text-align: center;
+      }
+
+      .print-report-header .print-report-title {
+        font-size: 18pt;
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+
+      .print-report-header p {
+        font-size: 10pt;
+        color: #4b5563;
+      }
+
+      .criterion-card:not(.is-selected) {
+        display: none !important;
+      }
+
+      .criterion-card.is-selected {
+        background: #f9fafb !important;
+        border: 1px solid #374151 !important;
+        margin-bottom: 6px;
+      }
+
+      .criteria-grid {
+        display: block !important;
+      }
+
+      .print-conclusion-card {
+        display: block !important;
+        border: 2px solid #000000;
+        padding: 16px;
+        border-radius: 8px;
+        margin-top: 20px;
+        break-inside: avoid;
+      }
+    }
+
+    .print-report-header,
+    .print-conclusion-card {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="print-header">
-            <h1>Relatório de Risco Gestacional</h1>
-            <p class="print-date" id="printDate"></p>
-        </div>
 
-        <header class="header">
-            <i class="fa-solid fa-triangle-exclamation header-icon" aria-hidden="true"></i>
+  <div class="app-container">
+    <!-- Print Header Only Visible when Printing -->
+    <div class="print-report-header">
+      <div class="print-report-title">Relatório de Avaliação do Risco Gestacional</div>
+      <p id="printDateTime">Protocolo SES/SC • 3ª Edição 2025</p>
+    </div>
+
+    <!-- Top Application Header -->
+    <header class="top-header">
+      <div class="header-main-row">
+        <div class="header-identity">
+          <div class="header-icon-box" aria-hidden="true">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </div>
+          <div class="header-titles">
             <h1>Calculadora de Risco Gestacional</h1>
-            <p>Sistema de pontuação para estratificação de risco na gestação. Selecione os critérios aplicáveis para calcular o risco.</p>
-            
-            <div class="header-guidelines">
-                <div class="header-guidelines-title">
-                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
-                    Orientações Importantes
-                </div>
-                <ul>
-                    <li>A estratificação de risco é contínua e deve ser realizada em todos os atendimentos.</li>
-                    <li>Quanto maior o número de fatores de risco, maior o risco obstétrico individualizado.</li>
-                    <li>Identificar as mulheres com maior risco obstétrico reduz a mortalidade materna e perinatal.</li>
-                </ul>
-                <a href="https://antigo.saude.sc.gov.br/index.php/documentos/informacoes-gerais/regulacao-1/acessos-por-especialidade/consulta-adulto/24421-consulta-em-ginecologia-gestante-de-alto-risco-pre-natal-de-alto-risco/file" 
-                   target="_blank" 
-                   rel="noopener noreferrer" 
-                   class="header-protocol-link">
-                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
-                    Protocolo de Regulação de Pré-Natal de Alto Risco
-                </a>
-            </div>
-        </header>
-
-        <main class="bento-grid" id="mainGrid" role="form" aria-label="Formulário de avaliação de risco gestacional">
-            <!-- Content will be generated by JavaScript -->
-        </main>
-
-        <section class="results-section" aria-live="polite" aria-atomic="true">
-            <div class="results-card">
-                <button type="button" class="search-btn" id="searchBtn" aria-label="Abrir busca (pressione Ctrl+F)">
-                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                </button>
-                <div class="results-main">
-                    <div class="results-score">
-                        <span class="score-value" id="totalScore">0</span>
-                        <span class="score-label">pontos</span>
-                    </div>
-                    <div class="results-classification low" id="classification">
-                        <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
-                        <span id="classificationText">Risco Habitual</span>
-                    </div>
-                    <div class="results-conduct">
-                        <div class="conduct-title">Conduta Sugerida</div>
-                        <div class="conduct-text" id="conductText">Acompanhamento na Atenção Primária à Saúde (APS)</div>
-                    </div>
-                </div>
-                <div class="results-details">
-                    <div class="results-items" id="selectedItems">
-                        <em>Nenhum critério selecionado</em>
-                    </div>
-                    <div class="results-actions">
-                        <button type="button" class="btn btn-secondary" id="clearBtn" aria-label="Limpar todos os campos">
-                            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
-                            Limpar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <footer class="footer">
-            <div class="footer-disclaimer">
-                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                Ferramenta de apoio baseada em pontuação fornecida; não substitui avaliação clínica. Validar com protocolo institucional vigente.
-            </div>
-            
-            <div class="footer-reference">
-                <div class="footer-reference-title">
-                    <i class="fa-solid fa-book" aria-hidden="true"></i>
-                    Referência
-                </div>
-                <div class="footer-reference-content">
-                    <strong>SANTA CATARINA.</strong> Secretaria de Estado da Saúde. <em>Instrumento de Estratificação de Risco Gestacional.</em> 3. ed. Florianópolis: SES/SC, jul. 2025. Disponível em: Rua Esteves Júnior, 390, Centro, Florianópolis-SC. © 2025 SES/SC.
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-label="Buscar critérios">
-        <div class="search-modal">
-            <div class="search-header">
-                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                <input type="text" class="search-input" id="searchInput" placeholder="Buscar critérios..." aria-label="Buscar critérios">
-                <button type="button" class="search-close" id="searchClose">ESC</button>
-            </div>
-            <div class="search-results" id="searchResults" role="listbox">
-                <div class="search-no-results">Digite para buscar critérios...</div>
-            </div>
+            <p>Estratificação clínica de risco segundo o Protocolo Oficial SES/SC (3ª ed., 2025)</p>
+          </div>
         </div>
+
+        <div class="header-actions">
+          <button type="button" class="action-btn" id="searchTriggerBtn" title="Buscar critério (Ctrl+K)">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <span>Buscar</span>
+            <kbd>Ctrl G</kbd>
+          </button>
+
+          <button type="button" class="action-btn" id="filterSelectedBtn" title="Filtrar apenas itens selecionados">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            <span id="filterSelectedLabel">Apenas Marcados</span>
+          </button>
+
+          <button type="button" class="action-btn" id="themeToggleBtn" aria-label="Alternar tema de cores">
+            <svg id="themeIconSun" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <svg id="themeIconMoon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </button>
+
+          <a href="instrumento_estratificacao_risco_2025_retificado.pdf" 
+             target="_blank" 
+             rel="noopener noreferrer" 
+             class="action-btn"
+             id="protocolPdfBtn"
+             title="Abrir Instrumento Oficial SES/SC Retificado 2025 (PDF completo em nova aba)">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Protocolo Oficial (PDF)</span>
+          </a>
+
+          <a href="https://www.saude.sc.gov.br/index.php/pt/atencao-primaria-a-saude/gerencias-da-aps/gapps/saude-da-mulher/saude-da-mulher-arquivos/instrumento-de-estratificacao-de-risco-gestacional-retificado-em-23-09-2025/download" 
+             target="_blank" 
+             rel="noopener noreferrer" 
+             class="action-btn"
+             id="protocolWebBtn"
+             title="Baixar a versão retificada diretamente do portal oficial da Secretaria de Estado da Saúde (SES/SC)">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            <span>Portal SES/SC</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="guidelines-toggle">
+        <details>
+          <summary class="guidelines-summary">
+            <div class="guidelines-summary-left">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Orientações Clínicas Fundamentais do Instrumento</span>
+            </div>
+            <svg class="guidelines-summary-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <div class="guidelines-content">
+            <div class="guideline-item">
+              <div class="guideline-dot"></div>
+              <div><strong>Estratificação Contínua e Absoluta:</strong> A avaliação de risco deve ocorrer em todos os atendimentos pré-natais (médicos e de enfermagem). A gestante nunca recebe alta da APS. Uma vez classificada como Alto Risco (≥10p), ela não retorna para risco habitual nesta gestação.</div>
+            </div>
+            <div class="guideline-item">
+              <div class="guideline-dot"></div>
+              <div><strong>Risco Intermediário (5 a 9 pontos):</strong> Acompanhamento integral na APS com plano de mitigação, fortalecimento do apoio sociofamiliar e suporte de teleconsultoria assíncrona (Telessaúde-SC / MFC).</div>
+            </div>
+            <div class="guideline-item">
+              <div class="guideline-dot"></div>
+              <div><strong>Alto Risco (≥ 10 pontos) & SISREG:</strong> Encaminhamento prioritário ao AAE/PNAR com cuidado compartilhado com a APS. É mandatório registrar no SISREG: DUM, IG, DPP, paridade, exames alterados e mapas de pressão/glicemia para evitar devoluções e subclassificação.</div>
+            </div>
+            <div class="guideline-item">
+              <div class="guideline-dot" style="background:var(--danger);"></div>
+              <div><strong>Sinais de Alerta de Urgência/Emergência (Quadro 3):</strong> Crise hipertensiva (PA ≥ 160/110), suspeita de eclâmpsia, hemorragia genital (DPP/placenta prévia sangrante), bolsa rota (<37s) ou movimentos fetais ausentes exigem estabilização imediata na UBS, acionamento do SAMU (192) e transferência imediata à emergência obstétrica (não aguardar SISREG).</div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </header>
+
+    <!-- Main Criteria Container -->
+    <main class="groups-flow" id="groupsFlow" role="form" aria-label="Avaliação de critérios de risco">
+      <!-- Generated via JavaScript -->
+    </main>
+
+    <!-- Footer Information -->
+    <footer class="app-footer">
+      <div class="footer-disclaimer-box">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <div>
+          Ferramenta clínica de suporte à decisão médica baseada no protocolo de pontuação. Não substitui o julgamento e a avaliação clínica individualizada à beira do leito ou no consultório.
+        </div>
+      </div>
+      <p class="footer-ref-text">
+        <strong>Fonte Regulamentar:</strong> SANTA CATARINA. Secretaria de Estado da Saúde. <em>Instrumento de Estratificação de Risco Gestacional.</em> 3. ed. Florianópolis: SES/SC, jul. 2025.
+      </p>
+    </footer>
+  </div>
+
+  <!-- Floating Clinical Dock (Results Bar) -->
+  <div class="clinical-dock-wrapper" aria-live="polite">
+    <div class="clinical-dock">
+      <div class="dock-main-row">
+        <div class="dock-score-cluster">
+          <div class="dock-score-circle">
+            <span class="dock-score-num" id="totalScore">0</span>
+            <span class="dock-score-label">pts</span>
+          </div>
+
+          <div class="dock-triage-badge low" id="triageBadge">
+            <svg id="triageIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+            </svg>
+            <span id="triageText">Risco Habitual</span>
+          </div>
+        </div>
+
+        <div class="dock-conduct-block">
+          <div class="conduct-meta-title">Conduta Clínica Recomendada</div>
+          <div class="conduct-description" id="conductText">Acompanhamento pré-natal regular na Atenção Primária à Saúde (APS).</div>
+        </div>
+
+        <div class="dock-buttons">
+          <button type="button" class="action-btn" id="printReportBtn" title="Imprimir Ficha Clínica">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            <span>Imprimir</span>
+          </button>
+          
+          <button type="button" class="action-btn" id="clearAllBtn" title="Desmarcar todos os critérios">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Limpar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Active criteria tags list -->
+      <div class="dock-tags-row" id="activeChipsRow">
+        <span class="dock-empty-msg">Nenhum fator de risco selecionado até o momento.</span>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // Normalize text for accent-insensitive search
-        function normalizeText(text) {
-            return text
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '');
+  <!-- Command Palette / Search Modal -->
+  <div class="search-backdrop" id="searchBackdrop" role="dialog" aria-modal="true" aria-label="Buscar critérios clínicos">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input type="text" class="search-input-box" id="searchInput" placeholder="Digite para buscar qualquer critério, termo ou sinônimo..." autocomplete="off">
+        <button type="button" class="search-close-badge" id="searchCloseBtn">ESC</button>
+      </div>
+      <div class="search-results-list" id="searchResultsList" role="listbox">
+        <div class="search-no-results">Digite para buscar fatores de risco por nome ou palavra-chave...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       LOGIC & CLINICAL DATA SCRIPT
+       ========================================================================== -->
+  <script>
+    (function() {
+      'use strict';
+
+      // Clinical Database - Official Protocol SES/SC 2025
+      const criteriaData = [
+        {
+          id: 'grupo1',
+          category: 'Grupo 1',
+          title: 'Condições Individuais e Sociais',
+          icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>`,
+          items: [
+            { id: 'idade_menor_15', name: 'Idade menor que 15 anos', shortName: 'Idade < 15 anos', points: 2, keywords: 'adolescente jovem menor idade gravidez precoce menor15 crianca', exclusion: 'idade_maior_40' },
+            { id: 'idade_maior_40', name: 'Idade maior que 40 anos', shortName: 'Idade > 40 anos', points: 2, keywords: 'idosa madura avançada tardia anos maior40', exclusion: 'idade_menor_15' },
+            { id: 'raca_negra', name: 'Raça negra (preta ou parda)', shortName: 'Raça negra', points: 2, keywords: 'afrodescendente etnia cor parda preta' },
+            { id: 'baixa_escolaridade', name: 'Baixa escolaridade (< 5 anos de estudo)', shortName: 'Baixa escolaridade', points: 2, keywords: 'estudo educação analfabetismo ensino fundamental instrucao' },
+            { id: 'tabagista', name: 'Tabagista ativa', shortName: 'Tabagista', points: 2, keywords: 'cigarro fumo fumante nicotina tabaco' },
+            { id: 'violencia', name: 'Indícios de violência (física, psicológica ou sexual)', shortName: 'Violência', points: 2, keywords: 'agressão abuso doméstica violência física psicológica vulnerabilidade maus-tratos sexual' },
+            { id: 'vulnerabilidade', name: 'Vulnerabilidade social (imigrante, rua, indígena ou quilombola)', shortName: 'Vulnerabilidade social', points: 2, keywords: 'moradora situação pobreza marginalizada imigrante refugiada etnia rua quilombola indigena' },
+            { id: 'imc_baixo', name: 'Baixo peso materno (IMC < 18,0)', shortName: 'Baixo peso (IMC < 18)', points: 2, keywords: 'magreza desnutrição peso baixo imc', isIMC: true, imcRange: [0, 18.0] },
+            { id: 'imc_sobrepeso', name: 'Sobrepeso materno (IMC 25,0 a 29,9)', shortName: 'Sobrepeso (IMC 25-29.9)', points: 1, keywords: 'peso acima sobrepeso excesso imc', isIMC: true, imcRange: [25.0, 30.0] },
+            { id: 'imc_obesidade', name: 'Obesidade materna (IMC 30,0 a 39,9)', shortName: 'Obesidade (IMC 30-39.9)', points: 4, keywords: 'obesa obesidade peso moderada imc', isIMC: true, imcRange: [30.0, 40.0] },
+            { id: 'imc_obesidade_g3', name: 'Obesidade Grau 3 (IMC ≥ 40,0)', shortName: 'Obesidade G3 (IMC ≥ 40)', points: 10, keywords: 'super obesa obesidade grave mórbida grau 3 tres imc', isIMC: true, imcRange: [40.0, Infinity] }
+          ]
+        },
+        {
+          id: 'grupo2',
+          category: 'Grupo 2',
+          title: 'História Reprodutiva Anterior',
+          icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+          items: [
+            { id: 'abortamento_habitual', name: 'Abortamento habitual (≥ 2 perdas consecutivas)', shortName: 'Abortamento habitual', points: 2, keywords: 'aborto perda gestação recorrente consecutivo habitual' },
+            { id: 'acretismo', name: 'Histórico de acretismo placentário', shortName: 'Acretismo placentário', points: 2, keywords: 'placenta invasiva percreta increta acretismo previa' },
+            { id: 'ciur_anterior', name: 'Restrição de crescimento fetal anterior (CIUR)', shortName: 'CIUR anterior', points: 2, keywords: 'rciu ciur crescimento intrauterino retardo restrito feto pequeno' },
+            { id: 'prematuro_34', name: 'Parto pré-termo prévio > 34 semanas', shortName: 'Parto pré-termo > 34s', points: 2, keywords: 'prematuro antecipado semanas prematuridade tardio', exclusion: 'prematuro_menor_34' },
+            { id: 'prematuro_menor_34', name: 'Parto pré-termo prévio ≤ 34 semanas', shortName: 'Parto pré-termo ≤ 34s', points: 10, keywords: 'prematuro extremo muito precoce semanas prematuridade menor 34', exclusion: 'prematuro_34' },
+            { id: 'hipertensiva_desfecho', name: 'Doença hipertensiva prévia com desfecho desfavorável (Hellp, Eclâmpsia, UTI ou Óbito)', shortName: 'DHEG prévia grave', points: 10, keywords: 'pressão alta pré-eclâmpsia eclâmpsia hellp uti óbito dpp desfecho ruim pre-eclampsia morte' },
+            { id: 'obito_fetal', name: 'Óbito fetal de causa inexplicada em gestação anterior', shortName: 'Óbito fetal prévio', points: 10, keywords: 'morte natimorto perda fetal intrauterina inexplicada natimorto' },
+            { id: 'incompetencia_istmo', name: 'Incompetência istmocervical prévia', shortName: 'Incompetência istmocervical', points: 10, keywords: 'colo curto dilatação insuficiência cervical istmo perda tardia' },
+            { id: 'psicose_puerperal', name: 'Histórico de psicose puerperal', shortName: 'Psicose puerperal', points: 10, keywords: 'loucura depressão pós-parto transtorno psiquiátrico puerpério surto' },
+            { id: 'dpp_anterior', name: 'Descolamento prematuro de placenta (DPP) anterior', shortName: 'DPP anterior', points: 10, keywords: 'descolamento sangramento abruptio placentae dpp placenta' },
+            { id: 'cardiomiopatia_periparto', name: 'Cardiomiopatia periparto em gestação anterior', shortName: 'Cardiomiopatia periparto', points: 10, keywords: 'coração insuficiência cardíaca miocardiopatia periparto folego' },
+            { id: 'isoimunizacao_g2', name: 'Isoimunização Rh em gestação anterior', shortName: 'Isoimunização Rh (G2)', points: 5, keywords: 'rh negativo incompatibilidade sanguínea coombs eritroblastose feto hidropico' }
+          ]
+        },
+        {
+          id: 'grupo3',
+          category: 'Grupo 3',
+          title: 'Intercorrências na Gestação Atual',
+          icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>`,
+          items: [
+            { id: 'hipertensiva_atual', name: 'Doença hipertensiva na gestação / Pré-eclâmpsia', shortName: 'Doença hipertensiva atual', points: 10, keywords: 'pressão alta eclâmpsia hipertensão pré-eclâmpsia proteinúria pre-eclampsia dgeg' },
+            { id: 'dmg_insulina', name: 'Diabetes gestacional em uso de insulina', shortName: 'DMG com insulina', points: 10, keywords: 'açúcar glicose glicemia insulina dmg diabetes gestacao' },
+            { id: 'itu_pielonefrite', name: 'Infecção urinária de repetição (≥ 3) ou Pielonefrite', shortName: 'ITU repetição / Pielonefrite', points: 10, keywords: 'urina infecção bexiga rim cistite pielonefrite itu febre' },
+            { id: 'calculo_renal', name: 'Cálculo renal com obstrução ou complicação', points: 10, shortName: 'Cálculo renal obstrutivo', keywords: 'pedra rim nefrolitíase cólica nefrética obstrutivo urologica' },
+            { id: 'ciur_atual', name: 'Restrição de crescimento fetal (CIUR atual)', points: 10, shortName: 'CIUR atual', keywords: 'rciu ciur crescimento restrito feto pequeno psu percentil baixo' },
+            { id: 'macrossomia', name: 'Macrossomia fetal / Feto estimado > percentil 90', points: 10, shortName: 'Macrossomia fetal', keywords: 'grande feto gig peso macrossômico percentil 90 grande para idade' },
+            { id: 'liquido_amniotico', name: 'Alteração de líquido amniótico (Polidrâmnio / Oligodrâmnio)', points: 10, shortName: 'Polidrâmnio/Oligodrâmnio', keywords: 'líquido amniótico muito pouco ila polidrâmnio oligodrâmnio bolsa maior bolsao' },
+            { id: 'colo_curto_atual', name: 'Suspeita de incompetência istmo cervical (colo curto em USG a partir de 18 semanas)', points: 10, shortName: 'Colo curto (USG ≥18s)', keywords: 'colo uterino curto cerclagem funilamento iic menor 25mm 18 semanas' },
+            { id: 'placenta_previa', name: 'Placenta prévia com diagnóstico a partir de 14 semanas', points: 10, shortName: 'Placenta prévia (≥14s)', keywords: 'placenta baixa inserção sangramento prévia oclusiva 14 semanas' },
+            { id: 'hepatopatias', name: 'Hepatopatias agudas (colestase gravídica ou hepatites)', points: 10, shortName: 'Colestase / Hepatopatias', keywords: 'fígado hepática icterícia prurido coceira palmas colestase tgo tgp acidos biliares' },
+            { id: 'anemia_grave', name: 'Anemia grave (Hb < 8,0 g/dL) ou refratária ao tratamento (após 30-60 dias com sulfato ferroso VO)', points: 10, shortName: 'Anemia grave (Hb<8)', keywords: 'hemoglobina ferro sangue fraco anemia ferropriva refratária transfusao' },
+            { id: 'isoimunizacao_g3', name: 'Isoimunização Rh com Coombs Indireto positivo atual', points: 10, shortName: 'Isoimunização Rh atual', keywords: 'rh negativo incompatibilidade sanguínea coombs titulação sensibilizada' },
+            { id: 'cancer_gestacao', name: 'Câncer diagnosticado durante a gestação', points: 10, shortName: 'Câncer na gestação', keywords: 'neoplasia tumor oncologia maligno câncer biópsia quimioterapia' },
+            { id: 'ca_mama', name: 'Suspeita clínica de Câncer de Mama ou BI-RADS ≥ 3', points: 10, shortName: 'Suspeita Ca Mama', keywords: 'mama câncer nódulo mamografia birads bi-rads ultrassom nodulo' },
+            { id: 'nic', name: 'Neoplasia Intraepitelial Cervical (NIC 2 ou NIC 3)', points: 10, shortName: 'NIC 2 / NIC 3', keywords: 'colo útero lesão hpv displasia preventivo papanicolau nic' },
+            { id: 'malformacao_fetal', name: 'Malformação fetal anatômica ou arritmia fetal', points: 10, shortName: 'Malformação fetal', keywords: 'defeito cardíaco anomalia congênita ultrassom morfológico cromossomopatia' },
+            { id: 'gemelar', name: 'Gemelaridade (gestação múltipla)', points: 10, shortName: 'Gemelaridade', keywords: 'gêmeos múltipla trigêmeos corionicidade gemelar gemeos' },
+            { id: 'infecciosas', name: 'Doenças infecciosas ativas (Sífilis terciária/falha/reinfecção, HIV, HTLV, TB, Toxoplasmose aguda, Rubéola, CMV, Hanseníase, Dengue, Zika, Chikungunya)', points: 10, shortName: 'Doenças infecciosas', keywords: 'infecção transmissão vertical aids sífilis toxo zika citomegalovírus tuberculose vdrl lues hiv htlv' },
+            { id: 'condiloma', name: 'Condiloma acuminado', points: 10, shortName: 'Condiloma acuminado', keywords: 'hpv verruga genital lesão vegetante crista de galo vulva condiloma' },
+            { id: 'drogas_alcool', name: 'Dependência e/ou uso abusivo de drogas lícitas e ilícitas', points: 10, shortName: 'Drogas / Álcool', keywords: 'substâncias dependência química crack cocaína maconha etilismo álcool alcool drogas' },
+            { id: 'hiperemese', name: 'Hiperêmese gravídica refratária com perda ponderal (> 5% peso)', points: 10, shortName: 'Hiperêmese refratária', keywords: 'vômito náusea grave refratária cetonúria desidratação internacao' }
+          ]
+        },
+        {
+          id: 'grupo4',
+          category: 'Grupo 4',
+          title: 'Condições Clínicas Pré-Gestacionais',
+          icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`,
+          items: [
+            { id: 'has', name: 'Hipertensão arterial descompensada (encaminhar também à Cardiologia)', points: 10, shortName: 'HAS descompensada', keywords: 'pressão alta crônica has anti-hipertensivo metildopa cardiologia' },
+            { id: 'dm_tipo', name: 'DM 1 ou DM 2 descompensado (encaminhar também à Endocrinologia)', points: 10, shortName: 'DM 1/2 descompensado', keywords: 'açúcar glicose insulina dm1 dm2 diabetes prévio hemoglobina glicada endocrinologia' },
+            { id: 'tireoide', name: 'Tireoidopatias clínicas descompensadas (Hipo/Hipertireoidismo)', points: 10, shortName: 'Tireoidopatias', keywords: 'tireoide hipotiroidismo hipertiroidismo tsh t4 graves hashimoto levotiroxina' },
+            { id: 'psiquiatricas', name: 'Doenças psiquiátricas graves sob tratamento contínuo (psicose, depressão grave)', points: 10, shortName: 'Doença psiquiátrica grave', keywords: 'transtorno mental depressão grave bipolar esquizofrenia ideação suicida psicose remedio' },
+            { id: 'hematologicas', name: 'Doenças hematológicas (falciforme, PTI/PTT, coagulopatias) ou TVP / TEP / AVC / IAM prévios / anticoagulantes', points: 10, shortName: 'Trombofilias / Hematológicas', keywords: 'sangue coagulação trombose embolia derrame avc anemia falciforme plaquetopenia tvp tep' },
+            { id: 'cardiopatias', name: 'Cardiopatias maternas com repercussões hemodinâmicas', points: 10, shortName: 'Cardiopatias', keywords: 'coração arritmia sopro prótese valvar insuficiência fração ejeção infarto' },
+            { id: 'pneumopatias', name: 'Pneumopatias graves (DPOC, asma grave persistente, doenças intersticiais, hipertensão pulmonar)', points: 10, shortName: 'Pneumopatias graves', keywords: 'pulmão respiratório asma bronquite enfisema espirometria dispneia bombinha' },
+            { id: 'autoimunes', name: 'Doenças autoimunes sistêmicas (Lúpus Eritematoso, SAF, Artrite, Hashimoto, Graves)', points: 10, shortName: 'Doenças autoimunes', keywords: 'lúpus les saf síndrome antifosfolípide autoimune anticorpo reumatologia' },
+            { id: 'teratogenicos', name: 'Uso de fármacos teratogênicos (anticonvulsivantes, lítio, carbamazepina, valproico, fenobarbital)', points: 10, shortName: 'Uso de teratogênicos', keywords: 'medicamento remédio anticonvulsivante lítio ácido valproico carbamazepina teratogênico varfarina' },
+            { id: 'drc', name: 'Doença Renal Crônica (TFG < 60 mL/min ou terapia de substituição renal)', points: 10, shortName: 'Doença Renal Crônica', keywords: 'rim insuficiência renal clearance creatinina proteinúria diálise drc nefrologia' },
+            { id: 'hepatopatias_cronicas', name: 'Hepatopatias crônicas (cirrose, hepatite B ou C crônica)', points: 10, shortName: 'Hepatopatia crônica', keywords: 'fígado cirrose hepatite b hepatite c crônica hipertensão portal varizes' },
+            { id: 'transplantes', name: 'Histórico de transplante (órgãos sólidos ou medula óssea)', points: 10, shortName: 'Transplantes', keywords: 'transplante transplantada rim fígado coração medula óssea imunossupressor' },
+            { id: 'bariatrica', name: 'Cirurgia bariátrica recente (realizada há menos de 6 meses)', points: 10, shortName: 'Bariátrica < 6 meses', keywords: 'gástrica bypass redução estômago sleeve bariátrica recente desnutrição disabsorção' },
+            { id: 'epilepsia', name: 'Epilepsia ativa sob tratamento', points: 10, shortName: 'Epilepsia', keywords: 'convulsão crise neurológica epilepsia crise epiléptica eletroencefalo' },
+            { id: 'genital', name: 'Anormalidades do trato genitourinário (malformações müllerianas, miomas sintomáticos, massas anexiais >18s, histórico de rotura uterina)', points: 10, shortName: 'Anomalias genitourinárias', keywords: 'útero septado bicorno unicorno mioma volumoso distorção cavidade utero ruptura rotura uterina' },
+            { id: 'conizacao', name: 'Histórico de conização cervical ou traquelectomia prévia', points: 10, shortName: 'Conização/Traquelectomia', keywords: 'colo útero cone cirurgia leep caf conização colo curto incompetencia traquelectomia' },
+            { id: 'hiv_sem_adesao', name: 'Infecção por HIV com má adesão ao tratamento, CV detectável, CD4 < 250 ou coinfecção', points: 10, shortName: 'HIV má adesão / CD4<250', keywords: 'aids hiv vírus imunodeficiência carga viral detectável cd4 baixo tarv antiretroviral' }
+          ]
         }
+      ];
 
-        // Data Structure - Clinical criteria with exact points
-        const criteriaData = [
-            {
-                id: 'grupo1',
-                title: 'Condições Individuais/Sociais',
-                category: 'Grupo 1',
-                icon: 'fa-user',
-                items: [
-                    { id: 'idade_menor_15', name: 'Idade < 15 anos', shortName: 'Idade < 15 anos', points: 2, keywords: 'adolescente jovem menor idade criança', exclusion: 'idade_maior_40' },
-                    { id: 'idade_maior_40', name: 'Idade > 40 anos', shortName: 'Idade > 40 anos', points: 2, keywords: 'idosa madura avançada tardia', exclusion: 'idade_menor_15' },
-                    { id: 'raca_negra', name: 'Raça negra (preta/parda)', shortName: 'Raça negra', points: 2, keywords: 'afrodescendente etnia cor' },
-                    { id: 'baixa_escolaridade', name: 'Baixa escolaridade (< 5 anos)', shortName: 'Baixa escolaridade', points: 2, keywords: 'estudo educação analfabeta' },
-                    { id: 'tabagista', name: 'Tabagista ativa', shortName: 'Tabagista', points: 2, keywords: 'cigarro fumo fumante nicotina' },
-                    { id: 'violencia', name: 'Indícios de violência', shortName: 'Violência', points: 2, keywords: 'agressão abuso doméstica física psicológica' },
-                    { id: 'vulnerabilidade', name: 'Vulnerabilidade social (imigrante/rua/indígena/quilombola)', shortName: 'Vulnerabilidade social', points: 2, keywords: 'moradora situação pobreza marginalizada' },
-                    { id: 'imc_baixo', name: 'Baixo peso (IMC < 18)', shortName: 'Baixo peso', points: 2, keywords: 'magreza desnutrição peso', isIMC: true, imcRange: [0, 18] },
-                    { id: 'imc_sobrepeso', name: 'Sobrepeso (IMC 25-29.9)', shortName: 'Sobrepeso', points: 1, keywords: 'peso acima gordo', isIMC: true, imcRange: [25, 30] },
-                    { id: 'imc_obesidade', name: 'Obesidade (IMC 30-39.9)', shortName: 'Obesidade', points: 4, keywords: 'obesa peso mórbida', isIMC: true, imcRange: [30, 40] },
-                    { id: 'imc_obesidade_g3', name: 'Obesidade Grau 3 (IMC ≥ 40)', shortName: 'Obesidade Grau 3', points: 10, keywords: 'super obesa mórbida grau três', isIMC: true, imcRange: [40, Infinity] }
-                ]
-            },
-            {
-                id: 'grupo2',
-                title: 'História Reprodutiva Anterior',
-                category: 'Grupo 2',
-                icon: 'fa-clock-rotate-left',
-                items: [
-                    { id: 'abortamento_habitual', name: 'Abortamento habitual (≥ 2 consecutivos)', shortName: 'Abortamento habitual', points: 2, keywords: 'aborto perda gestação recorrente' },
-                    { id: 'acretismo', name: 'Acretismo placentário', shortName: 'Acretismo placentário', points: 2, keywords: 'placenta invasiva percreta increta' },
-                    { id: 'ciur_anterior', name: 'Restrição crescimento (CIUR)', shortName: 'CIUR anterior', points: 2, keywords: 'rciu crescimento intrauterino retardo' },
-                    { id: 'prematuro_34', name: 'Parto pré-termo > 34 sem', shortName: 'Parto pré-termo > 34s', points: 2, keywords: 'prematuro antecipado semanas', exclusion: 'prematuro_menor_34' },
-                    { id: 'prematuro_menor_34', name: 'Parto pré-termo ≤ 34 sem', shortName: 'Parto pré-termo ≤ 34s', points: 10, keywords: 'prematuro extremo muito semanas', exclusion: 'prematuro_34' },
-                    { id: 'hipertensiva_desfecho', name: 'Doença hipertensiva com desfecho ruim (Hellp/Eclâmpsia/UTI/Óbito)', shortName: 'Doença hipertensiva prévia', points: 10, keywords: 'pressão alta pré-eclâmpsia síndrome eclampsia pre-eclampsia' },
-                    { id: 'obito_fetal', name: 'Óbito fetal causa inexplicada', shortName: 'Óbito fetal prévio', points: 10, keywords: 'morte natimorto perda' },
-                    { id: 'incompetencia_istmo', name: 'Incompetência istmo cervical', shortName: 'Incompetência istmo cervical', points: 10, keywords: 'colo curto dilatação insuficiência cervical' },
-                    { id: 'psicose_puerperal', name: 'Psicose puerperal', shortName: 'Psicose puerperal', points: 10, keywords: 'loucura depressão pós-parto mental' },
-                    { id: 'dpp_anterior', name: 'Descolamento prematuro placenta (DPP)', shortName: 'DPP anterior', points: 10, keywords: 'descolamento sangramento' },
-                    { id: 'cardiomiopatia_periparto', name: 'Cardiomiopatia periparto', shortName: 'Cardiomiopatia periparto', points: 10, keywords: 'coração insuficiência cardíaca' },
-                    { id: 'isoimunizacao_g2', name: 'Isoimunização Rh', shortName: 'Isoimunização Rh (G2)', points: 5, keywords: 'rh negativo incompatibilidade sanguínea eritroblastose' }
-                ]
-            },
-            {
-                id: 'grupo3',
-                title: 'Intercorrências na Gestação Atual',
-                category: 'Grupo 3',
-                icon: 'fa-baby',
-                items: [
-                    { id: 'hipertensiva_atual', name: 'Doença hipertensiva / Pré-eclâmpsia', shortName: 'Doença hipertensiva atual', points: 10, keywords: 'pressão alta eclâmpsia hipertensão eclampsia pre-eclampsia' },
-                    { id: 'dmg_insulina', name: 'Diabetes gestacional com insulina', shortName: 'DMG com insulina', points: 10, keywords: 'açúcar glicose glicemia' },
-                    { id: 'itu_pielonefrite', name: 'Infecção urinária repetição (≥3) ou Pielonefrite', shortName: 'ITU repetição/Pielonefrite', points: 10, keywords: 'urina infecção bexiga rim cistite' },
-                    { id: 'calculo_renal', name: 'Cálculo renal com obstrução', shortName: 'Cálculo renal obstrutivo', points: 10, keywords: 'pedra rim nefrolitíase' },
-                    { id: 'ciur_atual', name: 'CIUR atual', shortName: 'CIUR atual', points: 10, keywords: 'rciu crescimento restrito feto pequeno' },
-                    { id: 'macrossomia', name: 'Macrossomia/Feto > p90', shortName: 'Macrossomia', points: 10, keywords: 'grande feto gig peso' },
-                    { id: 'liquido_amniotico', name: 'Polidrâmnio/Oligodrâmnio', shortName: 'Alteração líquido amniótico', points: 10, keywords: 'líquido amniótico muito pouco ila polihidramnio oligohidramnio polidramnio oligodramnio' },
-                    { id: 'colo_curto_atual', name: 'Colo curto (< 18 sem) / Incompetência istmo cervical', shortName: 'Colo curto/IIC', points: 10, keywords: 'colo uterino curto cerclagem' },
-                    { id: 'placenta_previa', name: 'Placenta prévia', shortName: 'Placenta prévia', points: 10, keywords: 'placenta baixa inserção sangramento previa' },
-                    { id: 'hepatopatias', name: 'Hepatopatias (colestase/hepatites)', shortName: 'Hepatopatias', points: 10, keywords: 'fígado hepática icterícia coceira' },
-                    { id: 'anemia_grave', name: 'Anemia grave (Hb<8) ou refratária', shortName: 'Anemia grave', points: 10, keywords: 'hemoglobina ferro sangue fraco' },
-                    { id: 'isoimunizacao_g3', name: 'Isoimunização Rh', shortName: 'Isoimunização Rh (G3)', points: 10, keywords: 'rh negativo incompatibilidade sanguínea coombs' },
-                    { id: 'cancer_gestacao', name: 'Câncer na gestação', shortName: 'Câncer na gestação', points: 10, keywords: 'neoplasia tumor oncologia maligno cancer' },
-                    { id: 'ca_mama', name: 'Suspeita Ca Mama ou BIRADS ≥ 3', shortName: 'Suspeita Ca Mama', points: 10, keywords: 'mama câncer nódulo mamografia cancer' },
-                    { id: 'nic', name: 'NIC 2 ou 3', shortName: 'NIC 2/3', points: 10, keywords: 'colo útero lesão hpv displasia utero' },
-                    { id: 'malformacao_fetal', name: 'Malformação ou arritmia fetal', shortName: 'Malformação fetal', points: 10, keywords: 'defeito cardíaco anomalia cromossomo malformacao' },
-                    { id: 'gemelar', name: 'Gemelaridade', shortName: 'Gemelaridade', points: 10, keywords: 'gêmeos múltipla trigêmeos gemeos' },
-                    { id: 'infecciosas', name: 'Doenças infecciosas (Sífilis terciária/falha, HIV, HTLV, TB, Toxo, Rubéola, CMV, Zika, Chikungunya)', shortName: 'Doenças infecciosas', points: 10, keywords: 'infecção vírus bactéria transmissão vertical aids tuberculose sifilis rubeola' },
-                    { id: 'condiloma', name: 'Condiloma acuminado', shortName: 'Condiloma', points: 10, keywords: 'hpv verruga genital' },
-                    { id: 'drogas_alcool', name: 'Drogas/Álcool', shortName: 'Drogas/Álcool', points: 10, keywords: 'substâncias vício dependência crack cocaína alcool' },
-                    { id: 'hiperemese', name: 'Hiperêmese refratária', shortName: 'Hiperêmese', points: 10, keywords: 'vômito enjoo náusea grave hiperemese' }
-                ]
-            },
-            {
-                id: 'grupo4',
-                title: 'Condições Clínicas Prévias',
-                category: 'Grupo 4',
-                icon: 'fa-notes-medical',
-                items: [
-                    { id: 'has', name: 'Hipertensão Arterial', shortName: 'HAS', points: 10, keywords: 'pressão alta crônica hac hipertensao' },
-                    { id: 'dm_tipo', name: 'Diabetes Tipo 1 ou 2', shortName: 'DM Tipo 1/2', points: 10, keywords: 'açúcar glicose insulina glicemia acucar' },
-                    { id: 'tireoide', name: 'Tireoidopatias', shortName: 'Tireoidopatias', points: 10, keywords: 'tireoide hipo hiper tsh t4 tireoide' },
-                    { id: 'psiquiatricas', name: 'Doenças Psiquiátricas graves', shortName: 'Doenças psiquiátricas', points: 10, keywords: 'mental depressão bipolar esquizofrenia ansiedade depressao psiquiatricas' },
-                    { id: 'hematologicas', name: 'Doenças hematológicas / Trombofilias / Histórico de TVP/TEP/AVC', shortName: 'Hematológicas/Trombofilias', points: 10, keywords: 'sangue coagulação trombose embolia derrame anemia falciforme hematologicas' },
-                    { id: 'cardiopatias', name: 'Cardiopatias', shortName: 'Cardiopatias', points: 10, keywords: 'coração valva arritmia insuficiência sopro coracao' },
-                    { id: 'pneumopatias', name: 'Pneumopatias graves (Asma/DPOC)', shortName: 'Pneumopatias', points: 10, keywords: 'pulmão respiratório asma bronquite enfisema pulmao' },
-                    { id: 'autoimunes', name: 'Doenças autoimunes (Lupus/SAF/Hashimoto)', shortName: 'Doenças autoimunes', points: 10, keywords: 'lúpus autoimune síndrome antifosfolípide artrite lupus' },
-                    { id: 'teratogenicos', name: 'Uso de teratogênicos (anticonvulsivantes/lítio)', shortName: 'Uso de teratogênicos', points: 10, keywords: 'medicamento remédio droga epilepsia teratogenicos litio' },
-                    { id: 'drc', name: 'Doença Renal Crônica', shortName: 'DRC', points: 10, keywords: 'rim insuficiência renal diálise creatinina dialise cronica' },
-                    { id: 'bariatrica', name: 'Cirurgia bariátrica < 6 meses', shortName: 'Bariátrica < 6 meses', points: 10, keywords: 'gástrica bypass redução estômago bariatrica gastrica' },
-                    { id: 'epilepsia', name: 'Epilepsia', shortName: 'Epilepsia', points: 10, keywords: 'convulsão crise neurológica convulsao' },
-                    { id: 'genital', name: 'Anormalidades trato genital/Miomas grandes', shortName: 'Anormalidades genitais/Miomas', points: 10, keywords: 'útero mioma malformação uterina utero malformacao' },
-                    { id: 'conizacao', name: 'Conização prévia', shortName: 'Conização prévia', points: 10, keywords: 'colo útero cone cirurgia leep conizacao utero' },
-                    { id: 'hiv_sem_adesao', name: 'HIV sem adesão/CD4 baixo', shortName: 'HIV sem adesão', points: 10, keywords: 'aids vírus imunodeficiência carga viral virus adesao' }
-                ]
-            }
-        ];
+      // Application State
+      const state = {
+        selected: new Map(), // id -> { name, shortName, points, groupTitle }
+        imcMode: 'calc', // 'calc' | 'quick'
+        manualIMCId: null,
+        calculatedIMC: null,
+        filterOnlySelected: false
+      };
 
-        // State
-        let selectedItems = new Map();
-        let currentIMC = null;
-        let manualIMCSelection = null;
+      // DOM Elements
+      const groupsFlow = document.getElementById('groupsFlow');
+      const totalScoreEl = document.getElementById('totalScore');
+      const triageBadge = document.getElementById('triageBadge');
+      const triageText = document.getElementById('triageText');
+      const triageIcon = document.getElementById('triageIcon');
+      const conductText = document.getElementById('conductText');
+      const activeChipsRow = document.getElementById('activeChipsRow');
+      const clearAllBtn = document.getElementById('clearAllBtn');
+      const printReportBtn = document.getElementById('printReportBtn');
+      const filterSelectedBtn = document.getElementById('filterSelectedBtn');
+      const filterSelectedLabel = document.getElementById('filterSelectedLabel');
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      const themeIconSun = document.getElementById('themeIconSun');
+      const themeIconMoon = document.getElementById('themeIconMoon');
+      const searchTriggerBtn = document.getElementById('searchTriggerBtn');
+      const searchBackdrop = document.getElementById('searchBackdrop');
+      const searchInput = document.getElementById('searchInput');
+      const searchCloseBtn = document.getElementById('searchCloseBtn');
+      const searchResultsList = document.getElementById('searchResultsList');
+      const printDateTime = document.getElementById('printDateTime');
 
-        // DOM Elements
-        const mainGrid = document.getElementById('mainGrid');
-        const totalScoreEl = document.getElementById('totalScore');
-        const classificationEl = document.getElementById('classification');
-        const classificationTextEl = document.getElementById('classificationText');
-        const conductTextEl = document.getElementById('conductText');
-        const selectedItemsEl = document.getElementById('selectedItems');
-        const clearBtn = document.getElementById('clearBtn');
-        const searchBtn = document.getElementById('searchBtn');
-        const searchOverlay = document.getElementById('searchOverlay');
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-        const searchClose = document.getElementById('searchClose');
+      const imcItemIds = ['imc_baixo', 'imc_sobrepeso', 'imc_obesidade', 'imc_obesidade_g3'];
 
-        // IMC items IDs
-        const imcItemIds = ['imc_baixo', 'imc_sobrepeso', 'imc_obesidade', 'imc_obesidade_g3'];
+      // Text normalizer for fuzzy/accent-insensitive search
+      function normalize(str) {
+        return (str || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .trim();
+      }
 
-        // Render all sections
-        function renderSections() {
-            let html = '';
-            
-            criteriaData.forEach((group, groupIndex) => {
-                const hasIMC = group.id === 'grupo1';
-                
-                html += `
-                    <section class="section-card" aria-labelledby="section-title-${group.id}">
-                        <div class="section-header">
-                            <div class="section-icon">
-                                <i class="fa-solid ${group.icon}" aria-hidden="true"></i>
-                            </div>
-                            <div class="section-title-group">
-                                <div class="section-category">${group.category}</div>
-                                <h2 class="section-title" id="section-title-${group.id}">${group.title}</h2>
-                            </div>
-                        </div>
-                        ${hasIMC ? renderIMCCalculator() : ''}
-                        ${hasIMC ? renderIMCQuickSelect() : ''}
-                        <div class="items-grid" role="group" aria-label="${group.title}">
-                            ${group.items.map(item => renderItem(item, group)).join('')}
-                        </div>
-                    </section>
-                `;
-            });
-            
-            mainGrid.innerHTML = html;
-            attachItemListeners();
-            attachIMCListeners();
-            attachIMCQuickSelectListeners();
-        }
+      // Format Date for Print
+      if (printDateTime) {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        printDateTime.textContent = `Avaliação realizada em ${dateStr} às ${timeStr} • Protocolo Oficial SES/SC`;
+      }
 
-        function renderIMCCalculator() {
-            return `
-                <div class="imc-calculator" id="imcCalculator">
-                    <div class="imc-title">
-                        <i class="fa-solid fa-calculator" aria-hidden="true"></i>
-                        Calculadora de IMC
-                    </div>
-                    <div class="imc-inputs">
-                        <div class="input-group">
-                            <label for="pesoInput">Peso (kg)</label>
-                            <input type="number" id="pesoInput" step="0.1" min="20" max="300" placeholder="Ex: 65.5" aria-describedby="pesoHelp">
-                        </div>
-                        <div class="input-group">
-                            <label for="alturaInput">Altura (m ou cm)</label>
-                            <input type="number" id="alturaInput" step="0.01" min="0.5" max="250" placeholder="Ex: 1.65 ou 165" aria-describedby="alturaHelp">
-                        </div>
-                    </div>
-                    <div class="imc-result" id="imcResult">
-                        <span class="imc-value" id="imcValue">--</span>
-                        <div>
-                            <div class="imc-label">IMC</div>
-                            <div class="imc-category" id="imcCategory">Aguardando dados...</div>
-                        </div>
-                    </div>
+      // ==========================================================================
+      // RENDER DOM
+      // ==========================================================================
+      function renderAll() {
+        let html = '';
+
+        criteriaData.forEach(group => {
+          const isG1 = group.id === 'grupo1';
+
+          html += `
+            <section class="group-section" id="section-${group.id}" aria-labelledby="heading-${group.id}">
+              <div class="group-header">
+                <div class="group-title-cluster">
+                  <div class="group-badge-icon" aria-hidden="true">${group.icon}</div>
+                  <div class="group-title-text">
+                    <span>${group.category}</span>
+                    <h2 id="heading-${group.id}">${group.title}</h2>
+                  </div>
                 </div>
-            `;
-        }
+                <div class="group-status-chip" id="chip-${group.id}">0 selecionados</div>
+              </div>
 
-        function renderIMCQuickSelect() {
-            return `
-                <div class="imc-quick-select" id="imcQuickSelect">
-                    <div class="imc-quick-title">
-                        <i class="fa-solid fa-hand-pointer" aria-hidden="true"></i>
-                        Seleção Rápida de IMC
-                    </div>
-                    <div class="imc-quick-subtitle">Caso o IMC já tenha sido calculado previamente, selecione a faixa correspondente:</div>
-                    <div class="imc-quick-buttons">
-                        <button type="button" class="imc-quick-btn normal-weight" data-imc-range="normal" aria-label="IMC Normal (18 a 24.9) - sem pontuação">
-                            <span>Normal (18-24.9)</span>
-                            <span class="points-badge" style="background: var(--green);">0p</span>
-                        </button>
-                        <button type="button" class="imc-quick-btn" data-imc-range="imc_baixo" aria-label="IMC Baixo peso (menor que 18) - 2 pontos">
-                            <span>Baixo peso (&lt;18)</span>
-                            <span class="points-badge">2p</span>
-                        </button>
-                        <button type="button" class="imc-quick-btn" data-imc-range="imc_sobrepeso" aria-label="IMC Sobrepeso (25 a 29.9) - 1 ponto">
-                            <span>Sobrepeso (25-29.9)</span>
-                            <span class="points-badge">1p</span>
-                        </button>
-                        <button type="button" class="imc-quick-btn" data-imc-range="imc_obesidade" aria-label="IMC Obesidade (30 a 39.9) - 4 pontos">
-                            <span>Obesidade (30-39.9)</span>
-                            <span class="points-badge">4p</span>
-                        </button>
-                        <button type="button" class="imc-quick-btn" data-imc-range="imc_obesidade_g3" aria-label="IMC Obesidade Grau 3 (40 ou mais) - 10 pontos">
-                            <span>Obesidade G3 (≥40)</span>
-                            <span class="points-badge">10p</span>
-                        </button>
-                    </div>
+              ${isG1 ? renderIMCWidget() : ''}
+
+              <div class="criteria-grid" role="group" aria-label="${group.title}">
+                ${group.items.map(item => renderCriterionCard(item, group)).join('')}
+              </div>
+            </section>
+          `;
+        });
+
+        groupsFlow.innerHTML = html;
+        bindEvents();
+      }
+
+      function renderIMCWidget() {
+        return `
+          <div class="imc-widget" id="imcWidget">
+            <div class="imc-widget-top">
+              <div class="imc-widget-title">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <span>Avaliação do Índice de Massa Corporal (IMC)</span>
+              </div>
+
+              <div class="imc-tabs" role="tablist">
+                <button type="button" class="imc-tab-btn active" id="tabCalc" role="tab" aria-selected="true">Calculadora (Peso / Altura)</button>
+                <button type="button" class="imc-tab-btn" id="tabQuick" role="tab" aria-selected="false">Faixas Rápidas</button>
+              </div>
+            </div>
+
+            <!-- Panel 1: Calculator -->
+            <div class="imc-calc-view" id="imcCalcView">
+              <div class="input-field-group">
+                <label for="inputPeso">Peso Pré-Gestacional / Atual</label>
+                <div class="input-with-affix">
+                  <input type="text" inputmode="decimal" id="inputPeso" placeholder="Ex: 68,5" autocomplete="off" spellcheck="false">
+                  <span class="input-affix-label">kg</span>
                 </div>
-            `;
-        }
+              </div>
 
-        function renderItem(item, group) {
-            const isIMCItem = item.isIMC === true;
-            const disabledClass = isIMCItem ? 'disabled' : '';
-            const disabledAttr = isIMCItem ? 'disabled' : '';
-            
-            return `
-                <label class="item-card ${disabledClass}" 
-                       data-id="${item.id}" 
-                       data-points="${item.points}"
-                       data-keywords="${item.keywords}"
-                       data-group="${group.title}"
-                       data-short-name="${item.shortName}"
-                       data-exclusion="${item.exclusion || ''}"
-                       data-is-imc="${isIMCItem}">
-                    <input type="checkbox" 
-                           name="${item.id}" 
-                           value="${item.points}" 
-                           ${disabledAttr}
-                           aria-label="${item.name} - ${item.points} pontos">
-                    <div class="item-checkbox">
-                        <i class="fa-solid fa-check" aria-hidden="true"></i>
-                    </div>
-                    <div class="item-content">
-                        <div class="item-name">${item.name}</div>
-                    </div>
-                    <span class="item-points">${item.points}p</span>
-                </label>
-            `;
-        }
+              <div class="input-field-group">
+                <label for="inputAltura">Estatura da Gestante</label>
+                <div class="input-with-affix">
+                  <input type="text" inputmode="decimal" id="inputAltura" placeholder="Ex: 1,65 ou 165" autocomplete="off" spellcheck="false">
+                  <span class="input-affix-label">m</span>
+                </div>
+              </div>
 
-        function attachItemListeners() {
-            document.querySelectorAll('.item-card:not([data-is-imc="true"])').forEach(card => {
-                card.addEventListener('click', handleItemClick);
-                card.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleItemClick.call(card, e);
-                    }
-                });
-            });
-        }
+              <div class="imc-computed-card" id="imcComputedCard">
+                <div class="imc-score-display num-tabular" id="imcScoreValue">--</div>
+                <div class="imc-label-stack">
+                  <div class="imc-status-title" id="imcCategoryText">Aguardando dados...</div>
+                  <div class="imc-status-sub" id="imcPointsText">Insira peso e altura para pontuação</div>
+                </div>
+              </div>
+            </div>
 
-        function handleItemClick(e) {
-            const card = this;
-            const input = card.querySelector('input');
-            const id = card.dataset.id;
-            const points = parseInt(card.dataset.points);
-            const shortName = card.dataset.shortName;
-            const exclusion = card.dataset.exclusion;
-            
-            // Toggle selection
-            if (input.checked) {
-                input.checked = false;
-                card.classList.remove('selected');
-                selectedItems.delete(id);
-            } else {
-                // Handle mutual exclusions
-                if (exclusion) {
-                    const exclusionCard = document.querySelector(`[data-id="${exclusion}"]`);
-                    if (exclusionCard) {
-                        const exclusionInput = exclusionCard.querySelector('input');
-                        exclusionInput.checked = false;
-                        exclusionCard.classList.remove('selected');
-                        selectedItems.delete(exclusion);
-                    }
-                }
-                
-                input.checked = true;
-                card.classList.add('selected');
-                selectedItems.set(id, { 
-                    name: card.querySelector('.item-name').textContent,
-                    shortName: shortName,
-                    points: points 
-                });
+            <!-- Panel 2: Quick Select -->
+            <div class="imc-quick-grid" id="imcQuickGrid">
+              <button type="button" class="quick-imc-btn normal-weight" data-imc="normal">
+                <span class="q-title">Peso Normal</span>
+                <span class="q-range">18,0 a 24,9 kg/m²</span>
+                <span class="q-points num-tabular">0 pontos</span>
+              </button>
+              <button type="button" class="quick-imc-btn" data-imc="imc_baixo">
+                <span class="q-title">Baixo Peso</span>
+                <span class="q-range">&lt; 18,0 kg/m²</span>
+                <span class="q-points num-tabular">2 pontos</span>
+              </button>
+              <button type="button" class="quick-imc-btn" data-imc="imc_sobrepeso">
+                <span class="q-title">Sobrepeso</span>
+                <span class="q-range">25,0 a 29,9 kg/m²</span>
+                <span class="q-points num-tabular">1 ponto</span>
+              </button>
+              <button type="button" class="quick-imc-btn" data-imc="imc_obesidade">
+                <span class="q-title">Obesidade</span>
+                <span class="q-range">30,0 a 39,9 kg/m²</span>
+                <span class="q-points num-tabular">4 pontos</span>
+              </button>
+              <button type="button" class="quick-imc-btn" data-imc="imc_obesidade_g3">
+                <span class="q-title">Obesidade G3</span>
+                <span class="q-range">≥ 40,0 kg/m²</span>
+                <span class="q-points num-tabular">10 pontos</span>
+              </button>
+            </div>
+
+            <!-- Scale bar -->
+            <div class="imc-gauge-track" aria-hidden="true">
+              <div class="gauge-seg seg-under" title="Baixo peso (<18.0)"></div>
+              <div class="gauge-seg seg-normal" title="Normal (18.0-24.9)"></div>
+              <div class="gauge-seg seg-over" title="Sobrepeso (25.0-29.9)"></div>
+              <div class="gauge-seg seg-obese" title="Obesidade (≥30.0)"></div>
+              <div class="gauge-marker" id="gaugeMarker"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderCriterionCard(item, group) {
+        const isImc = item.isIMC === true;
+        const heavyClass = item.points >= 10 ? 'heavy-points' : '';
+
+        return `
+          <div class="criterion-card ${heavyClass}" 
+               id="card-${item.id}"
+               data-id="${item.id}" 
+               data-points="${item.points}"
+               data-short-name="${item.shortName}"
+               data-group-title="${group.title}"
+               data-exclusion="${item.exclusion || ''}"
+               data-is-imc="${isImc}"
+               role="checkbox"
+               aria-checked="false"
+               tabindex="0">
+            <input type="checkbox" name="${item.id}" value="${item.points}" aria-label="${item.name}" tabindex="-1" aria-hidden="true" style="pointer-events:none;">
+            <div class="custom-checkbox" aria-hidden="true">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div class="card-content-area">
+              <div class="card-title">${item.name}</div>
+            </div>
+            <span class="points-badge ${heavyClass} num-tabular">${item.points}p</span>
+          </div>
+        `;
+      }
+
+      // ==========================================================================
+      // EVENT LISTENERS & INTERACTION
+      // ==========================================================================
+      function bindEvents() {
+        // Criteria Card click / keyboard Enter / Space (all criteria cards, including IMC)
+        document.querySelectorAll('.criterion-card').forEach(card => {
+          card.addEventListener('click', onCriterionClick);
+          card.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              e.preventDefault();
+              card.click();
             }
-            
-            updateResults();
+          });
+        });
+
+        // IMC Tabs
+        const tabCalc = document.getElementById('tabCalc');
+        const tabQuick = document.getElementById('tabQuick');
+        const calcView = document.getElementById('imcCalcView');
+        const quickGrid = document.getElementById('imcQuickGrid');
+
+        if (tabCalc && tabQuick) {
+          tabCalc.addEventListener('click', () => {
+            state.imcMode = 'calc';
+            tabCalc.classList.add('active');
+            tabCalc.setAttribute('aria-selected', 'true');
+            tabQuick.classList.remove('active');
+            tabQuick.setAttribute('aria-selected', 'false');
+            calcView.style.display = '';
+            quickGrid.classList.remove('active');
+            computeIMC();
+          });
+
+          tabQuick.addEventListener('click', () => {
+            state.imcMode = 'quick';
+            tabQuick.classList.add('active');
+            tabQuick.setAttribute('aria-selected', 'true');
+            tabCalc.classList.remove('active');
+            tabCalc.setAttribute('aria-selected', 'false');
+            calcView.style.display = 'none';
+            quickGrid.classList.add('active');
+          });
         }
 
-        function attachIMCListeners() {
-            const pesoInput = document.getElementById('pesoInput');
-            const alturaInput = document.getElementById('alturaInput');
-            
-            if (pesoInput && alturaInput) {
-                pesoInput.addEventListener('input', calculateIMC);
-                alturaInput.addEventListener('input', calculateIMC);
-                
-                // Handle comma to dot conversion
-                [pesoInput, alturaInput].forEach(input => {
-                    input.addEventListener('keypress', (e) => {
-                        if (e.key === ',') {
-                            e.preventDefault();
-                            const start = input.selectionStart;
-                            const end = input.selectionEnd;
-                            const value = input.value;
-                            input.value = value.substring(0, start) + '.' + value.substring(end);
-                            input.setSelectionRange(start + 1, start + 1);
-                            calculateIMC();
-                        }
-                    });
-                });
+        // IMC Inputs (Peso & Altura) - robust decimal input handling
+        const inputPeso = document.getElementById('inputPeso');
+        const inputAltura = document.getElementById('inputAltura');
+
+        if (inputPeso && inputAltura) {
+          const handleNumericInput = (inputEl) => {
+            let val = inputEl.value;
+            // Clean any char that is not digit, comma, or dot
+            val = val.replace(/[^0-9.,]/g, '');
+            // Prevent multiple separators
+            const firstSepIndex = val.search(/[.,]/);
+            if (firstSepIndex !== -1) {
+              const before = val.substring(0, firstSepIndex + 1);
+              const after = val.substring(firstSepIndex + 1).replace(/[.,]/g, '');
+              val = before + after;
             }
+            if (val !== inputEl.value) {
+              const cursor = inputEl.selectionStart;
+              inputEl.value = val;
+              try { inputEl.setSelectionRange(cursor, cursor); } catch (_) {}
+            }
+            computeIMC();
+          };
+
+          inputPeso.addEventListener('input', () => handleNumericInput(inputPeso));
+          inputAltura.addEventListener('input', () => handleNumericInput(inputAltura));
+
+          // Quick-select text on focus so user can immediately type over
+          inputPeso.addEventListener('focus', () => {
+            try { inputPeso.select(); } catch (_) {}
+          });
+          inputAltura.addEventListener('focus', () => {
+            try { inputAltura.select(); } catch (_) {}
+          });
         }
 
-        function attachIMCQuickSelectListeners() {
-            document.querySelectorAll('.imc-quick-btn').forEach(btn => {
-                btn.addEventListener('click', handleIMCQuickSelect);
-            });
-        }
+        // Quick IMC Buttons
+        document.querySelectorAll('.quick-imc-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const imcChoice = btn.dataset.imc; // 'normal', 'imc_baixo', etc.
 
-        function handleIMCQuickSelect(e) {
-            const btn = e.currentTarget;
-            const range = btn.dataset.imcRange;
-            const imcCalculator = document.getElementById('imcCalculator');
-            
-            // If same button is clicked again, deselect
+            // Clear input fields so there are no stale values when returning to calc tab
+            const pesoInp = document.getElementById('inputPeso');
+            const altInp = document.getElementById('inputAltura');
+            if (pesoInp) pesoInp.value = '';
+            if (altInp) altInp.value = '';
+
+            // Toggle off if already selected
             if (btn.classList.contains('selected')) {
-                btn.classList.remove('selected');
-                manualIMCSelection = null;
-                imcCalculator.classList.remove('disabled');
-                
-                // Clear IMC selections
-                clearIMCSelections();
-                updateResults();
-                return;
+              btn.classList.remove('selected');
+              state.manualIMCId = null;
+              clearIMCSelections();
+              resetIMCDisplay();
+              updateResults();
+              return;
             }
-            
-            // Clear all quick select buttons
-            document.querySelectorAll('.imc-quick-btn').forEach(b => b.classList.remove('selected'));
-            
-            // Select clicked button
+
+            document.querySelectorAll('.quick-imc-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-            manualIMCSelection = range;
-            
-            // Disable the calculator
-            imcCalculator.classList.add('disabled');
-            
-            // Clear calculator inputs
-            const pesoInput = document.getElementById('pesoInput');
-            const alturaInput = document.getElementById('alturaInput');
-            const imcValue = document.getElementById('imcValue');
-            const imcCategory = document.getElementById('imcCategory');
-            const imcResult = document.getElementById('imcResult');
-            
-            if (pesoInput) pesoInput.value = '';
-            if (alturaInput) alturaInput.value = '';
-            if (imcValue) imcValue.textContent = '--';
-            if (imcCategory) imcCategory.textContent = 'Seleção manual ativa';
-            if (imcResult) imcResult.classList.remove('has-value');
-            
-            // Clear previous IMC selections and select new one
-            clearIMCSelections();
-            
-            if (range !== 'normal' && imcItemIds.includes(range)) {
-                selectIMCItem(range);
-            }
-            
-            updateResults();
-        }
+            state.manualIMCId = imcChoice;
 
-        function clearIMCSelections() {
-            imcItemIds.forEach(id => {
-                const card = document.querySelector(`[data-id="${id}"]`);
-                if (card) {
-                    card.classList.remove('selected');
-                    card.classList.add('disabled');
-                    card.querySelector('input').checked = false;
-                    selectedItems.delete(id);
+            clearIMCSelections();
+
+            if (imcChoice !== 'normal' && imcItemIds.includes(imcChoice)) {
+              selectIMCItem(imcChoice);
+            }
+
+            syncGaugeToIMCId(imcChoice);
+            updateResults();
+          });
+        });
+      }
+
+      function onCriterionClick(e) {
+        if (e && e.target && e.target.tagName === 'INPUT') return;
+        const card = this;
+        const input = card.querySelector('input');
+        const id = card.dataset.id;
+        const points = parseInt(card.dataset.points, 10);
+        const shortName = card.dataset.shortName;
+        const groupTitle = card.dataset.groupTitle;
+        const exclusion = card.dataset.exclusion;
+        const isImc = card.dataset.isImc === 'true';
+
+        if (card.classList.contains('is-selected')) {
+          // Deselect
+          if (input) input.checked = false;
+          card.classList.remove('is-selected');
+          card.setAttribute('aria-checked', 'false');
+          state.selected.delete(id);
+
+          if (isImc) {
+            state.manualIMCId = null;
+            state.calculatedIMC = null;
+            const pesoInp = document.getElementById('inputPeso');
+            const altInp = document.getElementById('inputAltura');
+            if (pesoInp) pesoInp.value = '';
+            if (altInp) altInp.value = '';
+            document.querySelectorAll('.quick-imc-btn').forEach(b => b.classList.remove('selected'));
+            resetIMCDisplay();
+          }
+        } else {
+          // If selecting an IMC criterion, enforce mutual exclusivity across all IMC criteria
+          if (isImc) {
+            imcItemIds.forEach(otherId => {
+              if (otherId !== id) {
+                const otherCard = document.getElementById(`card-${otherId}`);
+                if (otherCard) {
+                  otherCard.classList.remove('is-selected');
+                  otherCard.setAttribute('aria-checked', 'false');
+                  const otherInput = otherCard.querySelector('input');
+                  if (otherInput) otherInput.checked = false;
                 }
+                state.selected.delete(otherId);
+              }
             });
-        }
 
-        function selectIMCItem(imcId) {
-            const card = document.querySelector(`[data-id="${imcId}"]`);
-            if (card) {
-                card.classList.add('selected');
-                card.classList.remove('disabled');
-                card.querySelector('input').checked = true;
-                const points = parseInt(card.dataset.points);
-                const shortName = card.dataset.shortName;
-                selectedItems.set(imcId, { 
-                    name: card.querySelector('.item-name').textContent,
-                    shortName: shortName,
-                    points: points 
-                });
-            }
-        }
-
-        function calculateIMC() {
-            // If manual selection is active, don't calculate
-            if (manualIMCSelection) {
-                return;
-            }
-            
-            const pesoInput = document.getElementById('pesoInput');
-            const alturaInput = document.getElementById('alturaInput');
-            const imcValue = document.getElementById('imcValue');
-            const imcCategory = document.getElementById('imcCategory');
-            const imcResult = document.getElementById('imcResult');
-            
-            let peso = parseFloat(pesoInput.value.replace(',', '.'));
-            let altura = parseFloat(alturaInput.value.replace(',', '.'));
-            
-            // Clear previous IMC selections
-            clearIMCSelections();
-            
-            if (!peso || !altura || peso <= 0 || altura <= 0) {
-                imcValue.textContent = '--';
-                imcCategory.textContent = 'Aguardando dados...';
-                imcResult.classList.remove('has-value');
-                currentIMC = null;
-                updateResults();
-                return;
-            }
-            
-            // Convert cm to m if needed
-            if (altura > 3) {
-                altura = altura / 100;
-            }
-            
-            // Validate height
-            if (altura < 0.5 || altura > 2.5) {
-                imcValue.textContent = '--';
-                imcCategory.textContent = 'Altura inválida';
-                imcResult.classList.remove('has-value');
-                currentIMC = null;
-                updateResults();
-                return;
-            }
-            
-            // Calculate IMC
-            const imc = peso / (altura * altura);
-            currentIMC = imc;
-            
-            imcValue.textContent = imc.toFixed(1);
-            imcResult.classList.add('has-value');
-            
-            // Determine category and auto-select
-            let category = '';
-            let selectedIMCId = null;
-            
-            if (imc < 18) {
-                category = 'Baixo peso';
-                selectedIMCId = 'imc_baixo';
-            } else if (imc >= 18 && imc < 25) {
-                category = 'Peso normal';
-                // No selection for normal weight
-            } else if (imc >= 25 && imc < 30) {
-                category = 'Sobrepeso';
-                selectedIMCId = 'imc_sobrepeso';
-            } else if (imc >= 30 && imc < 40) {
-                category = 'Obesidade';
-                selectedIMCId = 'imc_obesidade';
-            } else {
-                category = 'Obesidade Grau 3';
-                selectedIMCId = 'imc_obesidade_g3';
-            }
-            
-            imcCategory.textContent = category;
-            
-            // Auto-select the corresponding IMC item
-            if (selectedIMCId) {
-                selectIMCItem(selectedIMCId);
-            }
-            
-            updateResults();
-        }
-
-        function updateResults() {
-            // Calculate total
-            let total = 0;
-            selectedItems.forEach(item => {
-                total += item.points;
+            // Synchronize with quick IMC buttons and visual gauge
+            document.querySelectorAll('.quick-imc-btn').forEach(b => {
+              if (b.dataset.imc === id) {
+                b.classList.add('selected');
+              } else {
+                b.classList.remove('selected');
+              }
             });
-            
-            totalScoreEl.textContent = total;
-            
-            // Determine classification
-            let classification, classText, conduct, colorClass;
-            
-            if (total >= 10) {
-                classification = 'high';
-                classText = 'Alto Risco';
-                conduct = 'Encaminhamento ao Pré-Natal de Alto Risco (PNAR) com Cuidado Compartilhado';
-                colorClass = 'high';
-            } else if (total >= 5) {
-                classification = 'medium';
-                classText = 'Risco Intermediário';
-                conduct = 'Acompanhamento na APS com teleconsultoria e apoio especializado';
-                colorClass = 'medium';
-            } else {
-                classification = 'low';
-                classText = 'Risco Habitual';
-                conduct = 'Acompanhamento na Atenção Primária à Saúde (APS)';
-                colorClass = 'low';
+            state.manualIMCId = id;
+            syncGaugeToIMCId(id);
+          }
+
+          // Handle Mutual Exclusion for other non-IMC items
+          if (exclusion) {
+            const excludedCard = document.getElementById(`card-${exclusion}`);
+            if (excludedCard) {
+              const excludedInput = excludedCard.querySelector('input');
+              if (excludedInput) excludedInput.checked = false;
+              excludedCard.classList.remove('is-selected');
+              excludedCard.setAttribute('aria-checked', 'false');
+              state.selected.delete(exclusion);
             }
-            
-            classificationEl.className = `results-classification ${colorClass}`;
-            
-            // Update icon
-            let iconClass = 'fa-check-circle';
-            if (classification === 'medium') iconClass = 'fa-exclamation-circle';
-            if (classification === 'high') iconClass = 'fa-times-circle';
-            
-            classificationEl.innerHTML = `
-                <i class="fa-solid ${iconClass}" aria-hidden="true"></i>
-                <span id="classificationText">${classText}</span>
+          }
+
+          if (input) input.checked = true;
+          card.classList.add('is-selected');
+          card.setAttribute('aria-checked', 'true');
+          state.selected.set(id, {
+            name: card.querySelector('.card-title').textContent,
+            shortName: shortName,
+            points: points,
+            groupTitle: groupTitle
+          });
+        }
+
+        updateResults();
+      }
+
+      function resetIMCDisplay() {
+        const gaugeMarker = document.getElementById('gaugeMarker');
+        const imcComputedCard = document.getElementById('imcComputedCard');
+        const imcScoreValue = document.getElementById('imcScoreValue');
+        const imcCategoryText = document.getElementById('imcCategoryText');
+        const imcPointsText = document.getElementById('imcPointsText');
+
+        if (gaugeMarker) gaugeMarker.classList.remove('visible');
+        if (imcComputedCard) imcComputedCard.classList.remove('is-active');
+        if (imcScoreValue) imcScoreValue.textContent = '--';
+        if (imcCategoryText) imcCategoryText.textContent = 'Aguardando dados...';
+        if (imcPointsText) imcPointsText.textContent = 'Insira peso e altura para pontuação';
+      }
+
+      function syncGaugeToIMCId(id) {
+        const gaugeMarker = document.getElementById('gaugeMarker');
+        const imcComputedCard = document.getElementById('imcComputedCard');
+        const imcScoreValue = document.getElementById('imcScoreValue');
+        const imcCategoryText = document.getElementById('imcCategoryText');
+        const imcPointsText = document.getElementById('imcPointsText');
+        if (!gaugeMarker) return;
+
+        let pct = 33;
+        let cat = 'Peso Normal (18,0 a 24,9)';
+        let pts = 'Sem pontuação de risco (0p)';
+        let approxIMC = '21,5';
+
+        if (id === 'imc_baixo') {
+          pct = 9;
+          cat = 'Baixo Peso (< 18,0)';
+          pts = '+2 pontos de risco';
+          approxIMC = '< 18';
+        } else if (id === 'imc_sobrepeso') {
+          pct = 58;
+          cat = 'Sobrepeso (25,0 a 29,9)';
+          pts = '+1 ponto de risco';
+          approxIMC = '27,5';
+        } else if (id === 'imc_obesidade') {
+          pct = 78;
+          cat = 'Obesidade (30,0 a 39,9)';
+          pts = '+4 pontos de risco';
+          approxIMC = '34,0';
+        } else if (id === 'imc_obesidade_g3') {
+          pct = 94;
+          cat = 'Obesidade Grau 3 (≥ 40,0)';
+          pts = '+10 pontos (Alto Risco imediato)';
+          approxIMC = '≥ 40';
+        } else if (id === 'normal') {
+          pct = 33;
+          cat = 'Peso Normal (18,0 a 24,9)';
+          pts = 'Sem pontuação de risco (0p)';
+          approxIMC = '21,5';
+        }
+
+        gaugeMarker.style.left = `${pct}%`;
+        gaugeMarker.classList.add('visible');
+
+        if (imcScoreValue) imcScoreValue.textContent = approxIMC;
+        if (imcCategoryText) imcCategoryText.textContent = cat;
+        if (imcPointsText) imcPointsText.textContent = pts;
+        if (imcComputedCard) imcComputedCard.classList.add('is-active');
+      }
+
+      // ==========================================================================
+      // IMC CALCULATION LOGIC
+      // ==========================================================================
+      function computeIMC() {
+        if (state.imcMode === 'quick') return;
+
+        const inputPeso = document.getElementById('inputPeso');
+        const inputAltura = document.getElementById('inputAltura');
+        const imcScoreValue = document.getElementById('imcScoreValue');
+        const imcCategoryText = document.getElementById('imcCategoryText');
+        const imcPointsText = document.getElementById('imcPointsText');
+        const imcComputedCard = document.getElementById('imcComputedCard');
+        const gaugeMarker = document.getElementById('gaugeMarker');
+
+        let peso = parseFloat((inputPeso.value || '').replace(',', '.'));
+        let altura = parseFloat((inputAltura.value || '').replace(',', '.'));
+
+        clearIMCSelections();
+
+        if (!peso || !altura || peso <= 0 || altura <= 0 || isNaN(peso) || isNaN(altura)) {
+          resetIMCDisplay();
+          state.calculatedIMC = null;
+          updateResults();
+          return;
+        }
+
+        // Auto convert cm to m if entered e.g. 165 -> 1.65
+        if (altura > 3.0) {
+          altura = altura / 100;
+        }
+
+        if (altura < 0.6 || altura > 2.4 || peso < 25 || peso > 300) {
+          imcScoreValue.textContent = '--';
+          imcCategoryText.textContent = 'Valores fora da faixa';
+          imcPointsText.textContent = 'Verifique o peso e a estatura inseridos';
+          imcComputedCard.classList.remove('is-active');
+          gaugeMarker.classList.remove('visible');
+          state.calculatedIMC = null;
+          updateResults();
+          return;
+        }
+
+        const imc = peso / (altura * altura);
+        state.calculatedIMC = imc;
+        imcScoreValue.textContent = imc.toFixed(1).replace('.', ',');
+        imcComputedCard.classList.add('is-active');
+
+        // Position Marker on Gauge (15 to 45 scale)
+        const clampedIMC = Math.max(15, Math.min(45, imc));
+        const percent = ((clampedIMC - 15) / 30) * 100;
+        gaugeMarker.style.left = `${percent}%`;
+        gaugeMarker.classList.add('visible');
+
+        let category = '';
+        let pointsStr = '';
+        let targetId = null;
+
+        if (imc < 18.0) {
+          category = 'Baixo Peso (< 18,0)';
+          pointsStr = '+2 pontos de risco';
+          targetId = 'imc_baixo';
+        } else if (imc < 25.0) {
+          category = 'Peso Normal (18,0 a 24,9)';
+          pointsStr = 'Sem pontuação de risco (0p)';
+          targetId = null;
+        } else if (imc < 30.0) {
+          category = 'Sobrepeso (25,0 a 29,9)';
+          pointsStr = '+1 ponto de risco';
+          targetId = 'imc_sobrepeso';
+        } else if (imc < 40.0) {
+          category = 'Obesidade (30,0 a 39,9)';
+          pointsStr = '+4 pontos de risco';
+          targetId = 'imc_obesidade';
+        } else {
+          category = 'Obesidade Grau 3 (≥ 40,0)';
+          pointsStr = '+10 pontos (Alto Risco imediato)';
+          targetId = 'imc_obesidade_g3';
+        }
+
+        imcCategoryText.textContent = category;
+        imcPointsText.textContent = pointsStr;
+
+        // Sync with Quick buttons
+        document.querySelectorAll('.quick-imc-btn').forEach(b => {
+          if ((targetId && b.dataset.imc === targetId) || (!targetId && b.dataset.imc === 'normal')) {
+            b.classList.add('selected');
+          } else {
+            b.classList.remove('selected');
+          }
+        });
+
+        if (targetId) {
+          selectIMCItem(targetId);
+        }
+
+        updateResults();
+      }
+
+      function selectIMCItem(id) {
+        const card = document.getElementById(`card-${id}`);
+        if (!card) return;
+
+        card.classList.add('is-selected');
+        card.setAttribute('aria-checked', 'true');
+        const input = card.querySelector('input');
+        if (input) input.checked = true;
+
+        const points = parseInt(card.dataset.points, 10);
+        const shortName = card.dataset.shortName;
+        const groupTitle = card.dataset.groupTitle;
+
+        state.selected.set(id, {
+          name: card.querySelector('.card-title').textContent,
+          shortName: shortName,
+          points: points,
+          groupTitle: groupTitle
+        });
+      }
+
+      function clearIMCSelections() {
+        imcItemIds.forEach(id => {
+          const card = document.getElementById(`card-${id}`);
+          if (card) {
+            card.classList.remove('is-selected');
+            card.setAttribute('aria-checked', 'false');
+            const input = card.querySelector('input');
+            if (input) input.checked = false;
+          }
+          state.selected.delete(id);
+        });
+      }
+
+      // ==========================================================================
+      // SCORE & TRIAGE UPDATE WITH ANIMATION
+      // ==========================================================================
+      let previousScore = 0;
+      function animateScore(target) {
+        const start = previousScore;
+        const duration = 250;
+        const startTime = performance.now();
+
+        function step(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          // Ease out cubic
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(start + (target - start) * eased);
+          totalScoreEl.textContent = current;
+
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            totalScoreEl.textContent = target;
+            previousScore = target;
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      let previousTier = 'low';
+
+      function updateResults() {
+        let total = 0;
+        state.selected.forEach(item => {
+          total += item.points;
+        });
+
+        // Trigger Score Counter Animation
+        animateScore(total);
+
+        // Determine Triage
+        let level = 'low';
+        let levelName = 'Risco Habitual';
+        let conduct = 'Acompanhamento pré-natal regular na Atenção Primária à Saúde (APS).';
+        let iconSvg = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />';
+
+        if (total >= 10) {
+          level = 'high';
+          levelName = 'Alto Risco';
+          conduct = 'Encaminhamento prioritário ao Pré-Natal de Alto Risco (PNAR) com plano de Cuidado Compartilhado entre APS e Atenção Especializada.';
+          iconSvg = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />';
+        } else if (total >= 5) {
+          level = 'medium';
+          levelName = 'Risco Intermediário';
+          conduct = 'Acompanhamento na APS com suporte de teleconsultoria e equipe multiprofissional ampliada.';
+          iconSvg = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />';
+        }
+
+        if (level !== previousTier) {
+          triageBadge.className = `dock-triage-badge ${level} tier-change`;
+          setTimeout(() => {
+            triageBadge.classList.remove('tier-change');
+          }, 320);
+          previousTier = level;
+        } else {
+          triageBadge.className = `dock-triage-badge ${level}`;
+        }
+
+        triageText.textContent = levelName;
+        triageIcon.innerHTML = iconSvg;
+        conductText.textContent = conduct;
+
+        // Update Group Chips Count
+        criteriaData.forEach(group => {
+          let count = 0;
+          let groupPoints = 0;
+          group.items.forEach(item => {
+            if (state.selected.has(item.id)) {
+              count++;
+              groupPoints += item.points;
+            }
+          });
+
+          const chip = document.getElementById(`chip-${group.id}`);
+          if (chip) {
+            if (count > 0) {
+              chip.textContent = `${count} ${count === 1 ? 'marcado' : 'marcados'} • ${groupPoints}p`;
+              chip.classList.add('has-selections');
+            } else {
+              chip.textContent = '0 selecionados';
+              chip.classList.remove('has-selections');
+            }
+          }
+        });
+
+        // Update Dock Active Chips
+        if (state.selected.size === 0) {
+          activeChipsRow.innerHTML = '<span class="dock-empty-msg">Nenhum fator de risco selecionado até o momento.</span>';
+        } else {
+          let chipsHtml = '';
+          state.selected.forEach((item, id) => {
+            chipsHtml += `
+              <div class="dock-tag-chip" data-id="${id}">
+                <span>${item.shortName} (${item.points}p)</span>
+                <button type="button" class="dock-tag-remove" aria-label="Remover ${item.shortName}">×</button>
+              </div>
             `;
-            
-            conductTextEl.textContent = conduct;
-            
-            // Update selected items list with abbreviated names
-            if (selectedItems.size === 0) {
-                selectedItemsEl.innerHTML = '<em>Nenhum critério selecionado</em>';
-            } else {
-                const itemsList = [];
-                selectedItems.forEach((item, id) => {
-                    itemsList.push(`${item.shortName} (${item.points}p)`);
-                });
-                selectedItemsEl.innerHTML = `<strong>Total ${total}p:</strong> ${itemsList.join(' + ')}`;
-            }
+          });
+          activeChipsRow.innerHTML = chipsHtml;
+
+          // Attach removal event on chips
+          activeChipsRow.querySelectorAll('.dock-tag-chip').forEach(chip => {
+            chip.querySelector('.dock-tag-remove').addEventListener('click', (e) => {
+              e.stopPropagation();
+              const id = chip.dataset.id;
+              
+              // If it's an IMC item, reset calculator or quick select
+              if (imcItemIds.includes(id)) {
+                clearIMCSelections();
+                const pesoInp = document.getElementById('inputPeso');
+                const altInp = document.getElementById('inputAltura');
+                if (pesoInp) pesoInp.value = '';
+                if (altInp) altInp.value = '';
+                state.manualIMCId = null;
+                state.calculatedIMC = null;
+                resetIMCDisplay();
+                document.querySelectorAll('.quick-imc-btn').forEach(b => b.classList.remove('selected'));
+              } else {
+                const card = document.getElementById(`card-${id}`);
+                if (card) {
+                  card.classList.remove('is-selected');
+                  card.setAttribute('aria-checked', 'false');
+                  const input = card.querySelector('input');
+                  if (input) input.checked = false;
+                  state.selected.delete(id);
+                }
+              }
+              updateResults();
+            });
+          });
         }
 
-        // Clear all
-        clearBtn.addEventListener('click', () => {
-            selectedItems.clear();
-            currentIMC = null;
-            manualIMCSelection = null;
-            
-            // Reset all checkboxes and cards
-            document.querySelectorAll('.item-card').forEach(card => {
-                card.classList.remove('selected', 'highlight');
-                const input = card.querySelector('input');
-                input.checked = false;
-                
-                // Reset IMC items to disabled
-                if (card.dataset.isImc === 'true') {
-                    card.classList.add('disabled');
-                }
-            });
-            
-            // Reset IMC calculator
-            const imcCalculator = document.getElementById('imcCalculator');
-            if (imcCalculator) imcCalculator.classList.remove('disabled');
-            
-            // Reset IMC inputs
-            const pesoInput = document.getElementById('pesoInput');
-            const alturaInput = document.getElementById('alturaInput');
-            const imcValue = document.getElementById('imcValue');
-            const imcCategory = document.getElementById('imcCategory');
-            const imcResult = document.getElementById('imcResult');
-            
-            if (pesoInput) pesoInput.value = '';
-            if (alturaInput) alturaInput.value = '';
-            if (imcValue) imcValue.textContent = '--';
-            if (imcCategory) imcCategory.textContent = 'Aguardando dados...';
-            if (imcResult) imcResult.classList.remove('has-value');
-            
-            // Reset quick select buttons
-            document.querySelectorAll('.imc-quick-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            
-            // Reset search
-            searchInput.value = '';
+        // Apply "Filter Only Selected" if active
+        if (state.filterOnlySelected) {
+          applyFilterOnlySelected();
+        }
+      }
+
+      // ==========================================================================
+      // CLEAR ALL
+      // ==========================================================================
+      clearAllBtn.addEventListener('click', () => {
+        state.selected.clear();
+        state.manualIMCId = null;
+        state.calculatedIMC = null;
+
+        // Reset cards
+        document.querySelectorAll('.criterion-card').forEach(card => {
+          card.classList.remove('is-selected', 'search-highlight');
+          card.setAttribute('aria-checked', 'false');
+          const input = card.querySelector('input');
+          if (input) input.checked = false;
+        });
+
+        // Reset IMC inputs & quick select
+        const pesoInp = document.getElementById('inputPeso');
+        const altInp = document.getElementById('inputAltura');
+        if (pesoInp) pesoInp.value = '';
+        if (altInp) altInp.value = '';
+        resetIMCDisplay();
+
+        document.querySelectorAll('.quick-imc-btn').forEach(b => b.classList.remove('selected'));
+
+        updateResults();
+      });
+
+      // ==========================================================================
+      // FILTER ONLY SELECTED
+      // ==========================================================================
+      function applyFilterOnlySelected() {
+        document.querySelectorAll('.criterion-card').forEach(card => {
+          const id = card.dataset.id;
+          if (state.filterOnlySelected) {
+            if (!state.selected.has(id)) {
+              card.style.display = 'none';
+            } else {
+              card.style.display = 'flex';
+            }
+          } else {
+            card.style.display = 'flex';
+          }
+        });
+      }
+
+      filterSelectedBtn.addEventListener('click', () => {
+        state.filterOnlySelected = !state.filterOnlySelected;
+        if (state.filterOnlySelected) {
+          filterSelectedBtn.classList.add('active');
+          filterSelectedLabel.textContent = 'Ver Todos';
+        } else {
+          filterSelectedBtn.classList.remove('active');
+          filterSelectedLabel.textContent = 'Apenas Marcados';
+        }
+        applyFilterOnlySelected();
+      });
+
+      // ==========================================================================
+      // PRINT REPORT
+      // ==========================================================================
+      printReportBtn.addEventListener('click', () => {
+        window.print();
+      });
+
+      // ==========================================================================
+      // DARK / LIGHT THEME TOGGLE
+      // ==========================================================================
+      function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('risk_calculator_theme', theme);
+
+        if (theme === 'dark') {
+          themeIconSun.style.display = 'none';
+          themeIconMoon.style.display = 'block';
+        } else if (theme === 'light') {
+          themeIconSun.style.display = 'block';
+          themeIconMoon.style.display = 'none';
+        } else {
+          // system
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          themeIconSun.style.display = prefersDark ? 'none' : 'block';
+          themeIconMoon.style.display = prefersDark ? 'block' : 'none';
+        }
+      }
+
+      themeToggleBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'system';
+        const isDark = currentTheme === 'dark' || (currentTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const nextTheme = isDark ? 'light' : 'dark';
+        applyTheme(nextTheme);
+      });
+
+      // Init Theme
+      const savedTheme = localStorage.getItem('risk_calculator_theme') || 'system';
+      applyTheme(savedTheme);
+
+      // ==========================================================================
+      // COMMAND PALETTE / FUZZY SEARCH
+      // ==========================================================================
+      function openSearch() {
+        searchBackdrop.classList.add('is-open');
+        searchInput.value = '';
+        renderSearchResults('');
+        document.body.style.overflow = 'hidden';
+        requestAnimationFrame(() => {
+          searchInput.focus();
+        });
+        setTimeout(() => {
+          searchInput.focus();
+        }, 50);
+      }
+
+      function closeSearch() {
+        searchBackdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+      }
+
+      searchTriggerBtn.addEventListener('click', openSearch);
+      searchCloseBtn.addEventListener('click', closeSearch);
+
+      searchBackdrop.addEventListener('click', (e) => {
+        if (e.target === searchBackdrop) {
+          closeSearch();
+        }
+      });
+
+      function renderSearchResults(query) {
+        const cleanQuery = normalize(query);
+        if (!cleanQuery) {
+          searchResultsList.innerHTML = '<div class="search-no-results">Digite qualquer termo clínico (ex: pressão, insulina, rim, fumo, parto)...</div>';
+          return;
+        }
+
+        const queryTokens = cleanQuery.split(/\s+/).filter(Boolean);
+        const matches = [];
+
+        criteriaData.forEach(group => {
+          group.items.forEach(item => {
+            const nameNorm = normalize(item.name);
+            const keywNorm = normalize(item.keywords);
+            const combined = `${nameNorm} ${keywNorm}`;
+
+            const isMatch = queryTokens.every(token => combined.includes(token));
+
+            if (isMatch) {
+              matches.push({
+                item: item,
+                groupTitle: group.title
+              });
+            }
+          });
+        });
+
+        if (matches.length === 0) {
+          searchResultsList.innerHTML = '<div class="search-no-results">Nenhum fator clínico correspondente encontrado.</div>';
+          return;
+        }
+
+        let html = '';
+        matches.forEach(m => {
+          const isSel = state.selected.has(m.item.id);
+          html += `
+            <div class="search-item" data-id="${m.item.id}">
+              <div class="search-item-info">
+                <div class="search-item-name">${m.item.name}</div>
+                <div class="search-item-group">${m.groupTitle} ${isSel ? '• <strong style="color:var(--primary)">Selecionado</strong>' : ''}</div>
+              </div>
+              <span class="points-badge num-tabular" style="align-self:center;">${m.item.points}p</span>
+            </div>
+          `;
+        });
+
+        searchResultsList.innerHTML = html;
+
+        // Click to navigate and select
+        searchResultsList.querySelectorAll('.search-item').forEach(el => {
+          el.addEventListener('click', () => {
+            const id = el.dataset.id;
             closeSearch();
-            
-            updateResults();
-        });
 
-        // Search functionality
-        function openSearch() {
-            searchOverlay.classList.add('active');
-            searchInput.focus();
-            document.body.style.overflow = 'hidden';
+            const card = document.getElementById(`card-${id}`);
+            if (card) {
+              card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              card.classList.add('search-highlight');
+              setTimeout(() => {
+                card.classList.remove('search-highlight');
+              }, 2000);
+
+              // If not selected, select it
+              if (!card.classList.contains('is-selected')) {
+                card.click();
+              }
+            }
+          });
+        });
+      }
+
+      searchInput.addEventListener('input', (e) => {
+        renderSearchResults(e.target.value);
+      });
+
+      // Global Keyboard Shortcuts (Ctrl+G, Ctrl+F, Ctrl+K, /, Esc)
+      // Capturing phase (useCapture: true) ensures Ctrl+G overrides native browser 'Find Next'
+      window.addEventListener('keydown', (e) => {
+        const isEditing = e.target.tagName === 'INPUT' && e.target !== searchInput;
+
+        if (e.key === 'Escape' && searchBackdrop.classList.contains('is-open')) {
+          e.preventDefault();
+          e.stopPropagation();
+          closeSearch();
+          return;
         }
 
-        function closeSearch() {
-            searchOverlay.classList.remove('active');
-            searchInput.value = '';
-            searchResults.innerHTML = '<div class="search-no-results">Digite para buscar critérios...</div>';
-            document.body.style.overflow = '';
+        // Primary: Ctrl+G (or Cmd+G) - Overrides Chrome native search
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'g' || e.key === 'G' || e.code === 'KeyG')) {
+          e.preventDefault();
+          e.stopPropagation();
+          openSearch();
+          return;
         }
 
-        searchBtn.addEventListener('click', openSearch);
-        searchClose.addEventListener('click', closeSearch);
-        
-        searchOverlay.addEventListener('click', (e) => {
-            if (e.target === searchOverlay) {
-                closeSearch();
-            }
-        });
+        // Secondary aliases: Ctrl+F, Ctrl+K
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'f' || e.key === 'F' || e.key === 'k' || e.key === 'K')) {
+          e.preventDefault();
+          e.stopPropagation();
+          openSearch();
+          return;
+        }
 
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.trim();
-            const normalizedQuery = normalizeText(query);
-            
-            if (!query) {
-                searchResults.innerHTML = '<div class="search-no-results">Digite para buscar critérios...</div>';
-                return;
-            }
-            
-            const results = [];
-            
-            criteriaData.forEach(group => {
-                group.items.forEach(item => {
-                    const normalizedName = normalizeText(item.name);
-                    const normalizedKeywords = normalizeText(item.keywords);
-                    
-                    const nameMatch = normalizedName.includes(normalizedQuery);
-                    const keywordMatch = normalizedKeywords.includes(normalizedQuery);
-                    
-                    if (nameMatch || keywordMatch) {
-                        results.push({
-                            id: item.id,
-                            name: item.name,
-                            group: group.title,
-                            points: item.points
-                        });
-                    }
-                });
-            });
-            
-            if (results.length === 0) {
-                searchResults.innerHTML = '<div class="search-no-results">Nenhum critério encontrado</div>';
-            } else {
-                searchResults.innerHTML = results.map(r => `
-                    <div class="search-result-item" data-id="${r.id}" role="option">
-                        <div>
-                            <div class="search-result-name">${r.name}</div>
-                            <div class="search-result-group">${r.group}</div>
-                        </div>
-                        <span class="item-points">${r.points}p</span>
-                    </div>
-                `).join('');
-                
-                // Attach click handlers
-                searchResults.querySelectorAll('.search-result-item').forEach(item => {
-                    item.addEventListener('click', () => {
-                        const id = item.dataset.id;
-                        const card = document.querySelector(`[data-id="${id}"]`);
-                        
-                        if (card) {
-                            closeSearch();
-                            
-                            // Scroll to item
-                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            
-                            // Highlight
-                            card.classList.add('highlight');
-                            setTimeout(() => {
-                                card.classList.remove('highlight');
-                            }, 1500);
-                        }
-                    });
-                });
-            }
-        });
+        if (e.key === '/' && !isEditing) {
+          e.preventDefault();
+          e.stopPropagation();
+          openSearch();
+        }
+      }, true);
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            const activeElement = document.activeElement;
-            const isInputFocused = activeElement.tagName === 'INPUT' && activeElement.type !== 'checkbox';
-            
-            if (e.key === 'Escape' && searchOverlay.classList.contains('active')) {
-                closeSearch();
-                return;
-            }
-            
-            // Ctrl+F to open search (override browser default)
-            if (e.ctrlKey && e.key === 'f') {
-                e.preventDefault();
-                openSearch();
-                return;
-            }
-            
-            if (!isInputFocused) {
-                if (e.key === '/' || (e.ctrlKey && e.key === 'k')) {
-                    e.preventDefault();
-                    openSearch();
-                }
-            }
-        });
+      // ==========================================================================
+      // INITIALIZATION
+      // ==========================================================================
+      function initApp() {
+        renderAll();
+        updateResults();
+      }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            renderSections();
-            updateResults();
-        });
-    </script>
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+      } else {
+        initApp();
+      }
+
+    })();
+  </script>
 </body>
 </html>
